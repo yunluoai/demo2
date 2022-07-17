@@ -166,12 +166,12 @@ function CollectionComp:update()
 
     self.obtainContainer_ = ccui.Layout:create()
     self.obtainContainer_:setContentSize(display.width,
-            1.2*rowNum*cardHeight)
+            rowNum*cardHeight)
 
     for i = 1, listLen do
         local card = PictorialCardComp.new(self.obtainedCardGroup_[i], true)
         card:setPosition((1+(i-1)%4-0.25)*cardWidth,
-                (rowNum-math.floor((i-1)/4))*cardHeight-0.2*cardHeight)
+                (rowNum-math.floor((i-1)/4))*cardHeight-0.5*cardHeight)
 
         self.obtainContainer_:addChild(card)
     end
@@ -185,12 +185,12 @@ function CollectionComp:update()
 
     self.notObtainContainer_ = ccui.Layout:create()
     self.notObtainContainer_:setContentSize(display.width,
-            1.2* rowNum *ConstDef.CARD_SIZE.TYPE_2.HEIGHT)
+            rowNum *ConstDef.CARD_SIZE.TYPE_2.HEIGHT)
 
     for i = 1, listLen do
         local card = PictorialCardComp.new(self.notObtainCardGroup_[i], false)
         card:setPosition((1+(i-1)%4-0.25)*cardWidth,
-                (rowNum-math.floor((i-1)/4))*cardHeight-0.2*cardHeight)
+                (rowNum-math.floor((i-1)/4))*cardHeight-0.5*cardHeight)
 
         self.notObtainContainer_:addChild(card)
     end

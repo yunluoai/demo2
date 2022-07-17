@@ -191,8 +191,11 @@ function LogInAndRegisterScene:onEnter()
         PlayerData:setId(resp["pid"])
         PlayerData:setName(resp["nick"])
         PlayerData:setPassword(resp["pwd"])
-        MsgManager:recPlayerData() -- 联网更新
+
         display.replaceScene(require("app.scenes.LobbyScene"):new())
+        MsgManager:recPlayerData() -- 联网更新
+        MsgManager:recStoreData()
+
     end)
     -- 监听登录失败
     EventManager:regListener(EventDef.ID.LOGIN_FAIL, self, function()

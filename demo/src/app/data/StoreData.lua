@@ -53,6 +53,17 @@ function StoreData:getGoldStoreCards()
 end
 
 --[[--
+    设置金币商店卡牌
+
+    @param cards
+
+    @return none
+]]
+function StoreData:setGoldStoreCards(cards)
+    goldStoreCards_ = cards
+end
+
+--[[--
     刷新金币商店卡牌
 
     @param none
@@ -61,50 +72,7 @@ end
 ]]
 function StoreData:refreshGoldStoreCards()
 
-    goldStoreCards_ = {}
-    -- 假数据
 
-    if self:randomSelectNumber(0, 1) == 0 then
-        table.insert(goldStoreCards_, { -- 资源
-            type = 1, -- 金币
-            cardId = "gold",
-            pieceNum = 1000,
-            cost = 0,
-        })
-    else
-        table.insert(goldStoreCards_, { -- 资源
-            type = 2, -- 钻石
-            cardId = "diamond",
-            pieceNum = 50,
-            cost = 0,
-        })
-    end
-
-    self:randomSelectCards(normalCards_, 3)
-    for i = 1, 3 do
-        table.insert(goldStoreCards_, { -- 普通卡
-            type = 3, -- 卡片
-            cardId = normalCards_[i]:getId(),
-            pieceNum = 36,
-            cost = 360,
-        })
-    end
-
-    self:randomSelectCards(rareCards_, 1)
-    table.insert(goldStoreCards_, { -- 稀有卡
-        type = 3, -- 卡片
-        cardId = rareCards_[1]:getId(),
-        pieceNum = 6,
-        cost = 600,
-    })
-
-    self:randomSelectCards(epicCards_, 1)
-    table.insert(goldStoreCards_, { -- 史诗卡
-        type = 3, -- 卡片
-        cardId = epicCards_[1]:getId(),
-        pieceNum = 1,
-        cost = 1000,
-    })
 end
 
 --[[--
@@ -116,7 +84,18 @@ end
 ]]
 function StoreData:initGoldStore()
 
-   self:refreshGoldStoreCards()
+    goldStoreCards_ = {}
+    -- 假数据
+
+    for i = 1, 6 do
+        local index = string.format("%d", i)
+        goldStoreCards_[index] = { -- 资源
+            type = 1, -- 金币
+            cardId = "gold",
+            pieceNum = 1000,
+            cost = 0,
+        }
+    end
 
 end
 

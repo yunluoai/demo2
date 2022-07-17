@@ -12,6 +12,7 @@ local EventManager = require("app.manager.EventManager")
 local EventDef = require("app.def.EventDef")
 local MsgDef = require("app.def.MsgDef")
 local PlayerData = require("app.data.PlayerData")
+local StoreData = require("app.data.StoreData")
 
 
 --[[
@@ -23,7 +24,9 @@ local PlayerData = require("app.data.PlayerData")
 ]]
 function MsgManager:recPlayerData()
 
-    TCP.send(MsgDef.REQ_TYPE.SEND_PLAYER_DATA, {pid=PlayerData:getId(), nick=PlayerData:getName()}, MsgDef.ACK_TYPE.SYNC_SUCCEED, function(resp)
+    TCP.send(MsgDef.REQ_TYPE.SEND_PLAYER_DATA, {pid=PlayerData:getId(), nick=PlayerData:getName()})
+
+    TCP.regListener(MsgDef.ACK_TYPE.PLAYER_DATA_SEND_SUCCEED, function(resp)
         -- 加载基本信息
         print(varDump(resp))
         PlayerData:setName(resp.data.nick)
@@ -91,7 +94,7 @@ function MsgManager:sendPlayerData()
         currentGroupOne=PlayerData:transCurrentGroupOne(),
         currentGroupTwo=PlayerData:transCurrentGroupTwo(),
         currentGroupThree=PlayerData:transCurrentGroupThree(),
-    }, MsgDef.ACK_TYPE.SYNC_SUCCEED, function(resp)
+    }, MsgDef.ACK_TYPE.PLAYER_DATA_REC_SUCCEED, function(resp)
         print(resp)
     end)
 end
@@ -186,6 +189,50 @@ function MsgManager:register(nick, pwd)
     end)
     TCP.send(MsgDef.REQ_TYPE.REGISTER, {nick=nick, pwd=pwd})
 
+end
+
+--[[
+    请求商店数据
+
+    @param none
+
+    @return none
+]]
+function MsgManager:recStoreData()
+
+    TCP.regListener(MsgDef.ACK_TYPE.STORE_DATA_SEND_SUCCEED, function(resp)
+
+        print(varDump(resp))
+
+        StoreData:setGoldStoreCards(resp.data)
+        EventManager:doEvent(EventDef.ID.GOLD_STORE_REFRESH)
+
+    end)
+
+    TCP.send(MsgDef.REQ_TYPE.SEND_STORE_DATA, {pid=PlayerData:getId(), nick=PlayerData:getName()})
+end
+
+--[[
+    进入游戏
+
+    @param none
+
+    @return none
+]]
+function MsgManager:enterGame()
+    -- 不需要返回消息
+    TCP.send(MsgDef.REQ_TYPE.ENTER_GAME, {pid=PlayerData:getId(), nick=PlayerData:getName()})
+end
+
+--[[
+    退出游戏
+
+    @param none
+
+    @return none
+]]
+function MsgManager:quitGame()
+    TCP.send(MsgDef.REQ_TYPE.QUIT_GAME, {pid=PlayerData:getId(), nick=PlayerData:getName()})
 end
 
 return MsgManager

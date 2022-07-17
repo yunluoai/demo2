@@ -47,7 +47,7 @@ function GoldStoreCardComp:initParam(storeCard, tag)
     self.type_ = self.storeCard_.type
 
     if self.type_ == 3 then
-        self.cardSprite_ = PlayerData:getCardById(self.cardId_):getMediumSpriteImg()
+        self.cardSprite_ = PlayerData:getCardById(tonumber(self.cardId_)):getMediumSpriteImg()
     end
 
 end

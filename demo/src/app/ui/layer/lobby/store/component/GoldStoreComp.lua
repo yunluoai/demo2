@@ -13,6 +13,7 @@ local ConstDef = require("app.def.ConstDef")
 local StoreData = require("app.data.StoreData")
 local EventManager = require("app.manager.EventManager")
 local EventDef = require("app.def.EventDef")
+local MsgManager = require("app.manager.MsgManager")
 
 --[[--
     构造函数
@@ -80,23 +81,23 @@ function GoldStoreComp:initView()
     refreshTime:addChild(refreshTimeTitle)
 
     -- 创建定时器
-    --local time = os.date("*t")
-    --
-    --CountdownComp.new()
-    --CountdownComp.setTime(23-time.hour,59-time.min,60-time.sec)
-    ----CountdownComp.setTime(0,0,5)
-    --CountdownComp.add_0()
-    --local refreshTimeText = CountdownComp.createText()
-    --refreshTimeText:setAnchorPoint(-1, 0.5)
-    --refreshTimeText:setTextColor(cc.c4b(255, 206, 55, 255))
-    --refreshTime:addChild(refreshTimeText)
-    --CountdownComp.scheduleFunc()                   --创建一个刷新函数
-    --CountdownComp.function_(function()
-    --    CountdownComp.reset(24, 0, 0)
-    --    EventManager:doEvent(EventDef.ID.GOLD_STORE_REFRESH) -- 刷新金币商店
-    --end)
-    --self.container_:addChild(refreshTime)
-    --
+    local time = os.date("*t")
+
+    CountdownComp.new()
+    CountdownComp.setTime(23-time.hour,59-time.min,60-time.sec)
+    --CountdownComp.setTime(0,0,50)
+    CountdownComp.add_0()
+    local refreshTimeText = CountdownComp.createText()
+    refreshTimeText:setAnchorPoint(-1, 0.5)
+    refreshTimeText:setTextColor(cc.c4b(255, 206, 55, 255))
+    refreshTime:addChild(refreshTimeText)
+    CountdownComp.scheduleFunc()                   --创建一个刷新函数
+    CountdownComp.function_(function()
+        CountdownComp.reset(24, 0, 0)
+        MsgManager:recStoreData()
+    end)
+    self.container_:addChild(refreshTime)
+
     self.cardContainer_ = ccui.Layout:create()
     self.cardContainer_:setContentSize(ConstDef.WINDOW_SIZE.GOLD_STORE.WIDTH,
     ConstDef.WINDOW_SIZE.GOLD_STORE.HEIGHT)
@@ -105,7 +106,8 @@ function GoldStoreComp:initView()
 
     -- 卡片
     for i = 1, 6 do
-        local card = GoldStoreCardComp.new(self.cards_[i], self.cards_[i].cardId) -- 用商店卡牌的Id作为tag
+        local index = string.format("%d", i)
+        local card = GoldStoreCardComp.new(self.cards_[index], self.cards_[index].cardId) -- 用商店卡牌的Id作为tag
         self.cardContainer_:addChild(card)
         card:setPosition((0.3*((i-1)%3)+0.2)*ConstDef.WINDOW_SIZE.GOLD_STORE.WIDTH,
                 (0.7-math.floor((i-1)/3)*0.4)*ConstDef.WINDOW_SIZE.GOLD_STORE.HEIGHT)
@@ -122,12 +124,17 @@ end
 ]]
 function GoldStoreComp:onEnter()
     EventManager:regListener(EventDef.ID.GOLD_STORE_REFRESH, self, function()
-        StoreData:refreshGoldStoreCards()
         self.cards_ = StoreData:getGoldStoreCards()
+
+        print(123456)
+        print(varDump(self.cards_))
+        print(123456)
+
         self.cardContainer_:removeAllChildren()
         for i = 1, 6 do
             -- 以cardId作为tag
-            local card = GoldStoreCardComp.new(self.cards_[i], self.cards_[i].cardId)
+            local index = string.format("%d", i)
+            local card = GoldStoreCardComp.new(self.cards_[index], self.cards_[index].cardId)
             self.cardContainer_:addChild(card)
             card:setPosition((0.3*((i-1)%3)+0.2)*ConstDef.WINDOW_SIZE.GOLD_STORE.WIDTH,
                     (0.7-math.floor((i-1)/3)*0.4)*ConstDef.WINDOW_SIZE.GOLD_STORE.HEIGHT)
@@ -143,7 +150,8 @@ end
     @return none
 ]]
 function GoldStoreComp:onExit()
-    EventManager:unRegListener(EventDef.ID.INIT_PLAYER_DATA, self)
+    CountdownComp.exit()
+    EventManager:unRegListener(EventDef.ID.GOLD_STORE_REFRESH, self)
 
 end
 

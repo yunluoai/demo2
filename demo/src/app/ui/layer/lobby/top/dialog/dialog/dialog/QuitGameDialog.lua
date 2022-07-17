@@ -8,6 +8,7 @@
 ]]
 local QuitGameDialog = class("QuitGameDialog", require("app.ui.layer.BaseLayer"))
 local ConstDef = require("app.def.ConstDef")
+local MsgManager = require("app.manager.MsgManager")
 
 local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
 
@@ -102,6 +103,10 @@ end
     @return none
 ]]
 function QuitGameDialog:exitGame()
+
+    -- 通知服务器玩家已经退出游戏
+    MsgManager:quitGame()
+
     local platform = cc.Application:getInstance():getTargetPlatform()
     if platform == cc.PLATFORM_OS_IPHONE or platform == cc.PLATFORM_OS_IPAD then  -- iOS设备
         os.exit()
