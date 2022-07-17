@@ -184,9 +184,9 @@ function GameData:createBoss()
     self.player1_:createBoss(1)
     self.player2_:createBoss(1)
     if self.bossFrequency_ == 1 then
-        self.bossTime_ = GameDef.BOSS_CREATE.TIME[2]
+        self.bossTime_ = GameDef.BOSS_CREATE.TIME[1]
     else
-        self.bossTime_ = GameDef.BOSS_CREATE.TIME[3]
+        self.bossTime_ = GameDef.BOSS_CREATE.TIME[2]
     end
     self.enemyFrequency_ = 0
 end
