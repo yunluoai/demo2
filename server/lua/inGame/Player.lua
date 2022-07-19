@@ -10,6 +10,11 @@ local Card2 = require("lua.inGame.card.Card2")
 local Card3 = require("lua.inGame.card.Card3")
 local Card4 = require("lua.inGame.card.Card4")
 local Card5 = require("lua.inGame.card.Card5")
+local Card6 = require("lua.inGame.card.Card6")
+local Card7 = require("lua.inGame.card.Card7")
+local Card8 = require("lua.inGame.card.Card8")
+local Card9 = require("lua.inGame.card.Card9")
+local Card10 = require("lua.inGame.card.Card10")
 
 local Utils = require("lua.Utils")
 
@@ -233,7 +238,7 @@ function Player:compoundCard(msg)
         x1 = CardDef.POS_UP[pos].X
         y1 = CardDef.POS_UP[pos].Y
         self.cardId_ = self.cardId_ + 1
-        local card = Card1:new(self,x,y,x1,y1,self.cardId_,pos,card1.starLevel_ + 1)
+        local card = Card10:new(self,x,y,x1,y1,self.cardId_,pos,card1.starLevel_ + 1)
         self.cardPos_[pos] = 1
         self.card_[card.id_..""] = card
         card1:destroy()
@@ -296,7 +301,7 @@ function Player:createCard()
 
     self.cardId_ = self.cardId_ + 1
 
-    local card = Card1:new(self,x,y,x1,y1,self.cardId_,pos,1)
+    local card = Card10:new(self,x,y,x1,y1,self.cardId_,pos,1)
 
     self.cardPos_[pos] = 1
 

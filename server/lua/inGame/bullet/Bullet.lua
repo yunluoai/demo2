@@ -109,8 +109,10 @@ function Bullet:attack()
         table.insert(self.player_.gameData_.hurt_,hurt)
 
         self.enemy_.hp_ = self.enemy_.hp_ - self.hurt_
-        self.state_.enemy_ = self.enemy_ 
-        table.insert(self.enemy_.state_,self.state_)
+        if self.state_ ~= nil then
+            self.state_.enemy_ = self.enemy_
+            table.insert(self.enemy_.state_,self.state_)
+        end
     end
     self:destroy()
 end

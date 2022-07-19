@@ -1,16 +1,15 @@
 --[[
-    Card1.lua
-    卡牌1
-    描述：卡牌1的定义
+    Card7.lua
+    卡牌7
+    描述：卡牌7的定义
     编写：李昊
     修订：周星宇
     检查：张昊煜
 ]]
 
 local Bullet = require("inGame.bullet.Bullet")
-local ZhuoShao = require("inGame.state.enemyState.ZhuoShao")
 
-local Card1 = {
+local Card7 = {
     x_ = nil,
     y_ = nil,
     x1_ = nil,
@@ -37,7 +36,7 @@ local Card1 = {
     @param player
     @return card1
 ]]
-function Card1:new(player,x,y,x1,y1,id,pos,starLevel)
+function Card7:new(player,x,y,x1,y1,id,pos,starLevel)
     local card = {}
     self.__index = self
     setmetatable(card,self)
@@ -50,18 +49,18 @@ end
     @param player
     @return none
 ]]
-function Card1:init(player,x,y,x1,y1,id,pos,starLevel)
+function Card7:init(player,x,y,x1,y1,id,pos,starLevel)
     self.x_ = x
-    self.y_ = y --底部显示
+    self.y_ = y
     self.x1_ = x1
-    self.y1_ = y1 --上面显示的坐标
+    self.y1_ = y1
     self.id_ = id
     self.atk_ = 20
-    self.atkEnhance_ = 10
+    self.atkEnhance_ = 15
     self.state_ = {}
     self.cha_ = 5
     self.chr_ = 2
-    self.fireCd_ = 0.8
+    self.fireCd_ = 0.45
     self.player_ = player
     self.time_ = 0
     self.size_ = 1
@@ -69,10 +68,15 @@ function Card1:init(player,x,y,x1,y1,id,pos,starLevel)
     self.enhanceLevel_ = self.player_.cardEnhanceLevel_[self.size_]
     self.starLevel_ = starLevel
     self:setStarLevel()
+    self.fireCdBase_ = self.fireCd_
     for i = 1,self.enhanceLevel_ -1 do
         self:enhance()
     end
-    self.skillValue_ = 5
+    -- self.skillValue_ = 120
+    -- self.skillValueEnhance_ = 40
+    self.fireCdEnhance_ = 0.01
+    self.fireCdEnhanceMax_ = 0.1
+    self.fireCnt_ = 0
 end
 
 --[[
@@ -80,42 +84,43 @@ end
     @param none
     @return none
 ]]
-function Card1:enhance()
+function Card7:enhance()
     self.enhanceLevel_= self.enhanceLevel_ + 1
     self.atk_ = self.atk_ + self.atkEnhance_
+    self.skillValue_ = self.skillValue_ + self.skillValueEnhance_
 end
 
-function Card1:setStarLevel()
+function Card7:setStarLevel()
     self.fireCd_ = self.fireCd_/self.starLevel_
 end
 
 --[[
     getX
 ]]
-function Card1:getX()
+function Card7:getX()
     return self.x_
 end
 
-function Card1:getY()
+function Card7:getY()
     return self.y_
 end
 
-function Card1:getId()
+function Card7:getId()
     return self.id_
 end
 
-function Card1:getSize()
+function Card7:getSize()
     return self.size_
 end
 
-function Card1:getEnhanceLevel()
+function Card7:getEnhanceLevel()
     return self.enhanceLevel_
 end
 
 --[[
     attack攻击函数
 ]]
-function Card1:attack()
+function Card7:attack()
 
     if #self.player_.enemy_ == 0 then
         return
@@ -136,24 +141,35 @@ function Card1:attack()
     end
 
     local hurt = self.atk_
+    -- 攻击时攻速获得提高
+    -- 每攻击一次攻速提高基础攻速的1%（上限10%）
+    local fireCdTotalEnhance = 0
+    for i=1,self.fireCnt_ do
+        if fireCdTotalEnhance < self.fireCdEnhanceMax_ then 
+            fireCdTotalEnhance = fireCdTotalEnhance + self.fireCdEnhance_
+            self.fireCd_ = self.fireCdBase_ * (1 - fireCdTotalEnhance)
+        end
+    end
+    -- print("fireCnt", self.fireCnt_)
+    -- print("fireCD", self.fireCd_)
+
     local isCha = false
     if math.random(100) <= 5 then
         hurt = hurt*self.chr_
         isCha = true
     end
 
-    local zhuoShao = ZhuoShao:new(self.skillValue_)
-
-    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,
-        self.player_:getBulletId(),self.player_,1,zhuoShao)
+    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,1,nil)
     table.insert(self.player_.bullet_,bullet)
+
+    self.fireCnt_ = self.fireCnt_ + 1
 
 end
 
 --[[
     attack攻击函数
 ]]
-function Card1:destroy()
+function Card7:destroy()
     self.player_:removeCard(self)
     self.player_.cardPos_[self.pos_] = 0
 end
@@ -161,7 +177,7 @@ end
 --[[
     update
 ]]
-function Card1:update(dt)
+function Card7:update(dt)
     
     self.time_ = self.time_ - dt
     if self.time_ <= 0 then
@@ -171,4 +187,4 @@ function Card1:update(dt)
 
 end
 
-return Card1
+return Card7
