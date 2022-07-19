@@ -4,7 +4,6 @@
 ]]
 local RegisterSucceedDialog = class("RegisterSucceedDialog", require("app.ui.layer.BaseUILayout"))
 local MsgManager = require("app.manager.MsgManager")
-local PlayerData = require("app.data.PlayerData")
 local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
 
 --[[--
@@ -69,8 +68,9 @@ function RegisterSucceedDialog:initView()
     confirmBtn:setPosition(0.7*dialogWidth, 1.6*dialogHeight)
     confirmBtn:addClickEventListener(function()
         self:hideView()
-        MsgManager:recPlayerData() -- 联网更新
         display.replaceScene(require("app.scenes.LobbyScene"):new())
+        MsgManager:recStoreData()
+        MsgManager:recPlayerData() -- 联网更新
     end)
     self.container_:addChild(confirmBtn)
 

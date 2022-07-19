@@ -14,6 +14,7 @@ local DialogManager = require("app.manager.DialogManager")
 local EventManager = require("app.manager.EventManager")
 local EventDef = require("app.def.EventDef")
 local PlayerData = require("app.data.PlayerData")
+local MsgManager = require("app.manager.MsgManager")
 
 --[[--
     构造函数
@@ -107,7 +108,7 @@ end
     @return none
 ]]
 function SpriteLayer:update()
-    PlayerData:sendPlayerData()
+    MsgManager:sendPlayerData()
 end
 
 return SpriteLayer

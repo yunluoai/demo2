@@ -125,13 +125,13 @@ function AvatarDialog:initView()
 
     local obtainContainer = ccui.Layout:create()
     obtainContainer:setContentSize(ConstDef.WINDOW_SIZE.AVATAR_VIEW.WIDTH,
-            1.2*rowNum*cardHeight)
+            rowNum*cardHeight)
     self.avatarListView_:pushBackCustomItem(obtainContainer)
 
     for i = 1, listLen do
         local avatarBtn = ccui.Button:create(self.obtainedCardGroup_[i]:getSmallSpriteImg())
         avatarBtn:setPosition((1+(i-1)%4)*cardWidth,
-                (rowNum-math.floor((i-1)/4))*cardHeight)
+                (rowNum-math.floor((i-1)/4))*cardHeight-0.5*cardHeight)
         avatarBtn:addClickEventListener(function()
             print("Avatar Button was clicked!")
             self.curNameText_ = self.obtainedCardGroup_[i]:getName()
@@ -154,13 +154,13 @@ function AvatarDialog:initView()
 
     local notObtainContainer = ccui.Layout:create()
     notObtainContainer:setContentSize(ConstDef.WINDOW_SIZE.AVATAR_VIEW.WIDTH,
-            1.2* rowNum *ConstDef.CARD_SIZE.TYPE_1.HEIGHT)
+            rowNum *ConstDef.CARD_SIZE.TYPE_1.HEIGHT)
     self.avatarListView_:pushBackCustomItem(notObtainContainer)
 
     for i = 1, listLen do
         local imageView = ccui.ImageView:create(self.notObtainCardGroup_[i]:getSmallSpriteImg())
         imageView:setPosition((1+(i-1)%4)*cardWidth,
-                (rowNum-math.floor((i-1)/4))*cardHeight)
+                (rowNum-math.floor((i-1)/4))*cardHeight-0.5*cardHeight)
         notObtainContainer:addChild(imageView)
     end
 

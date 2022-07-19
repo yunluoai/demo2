@@ -77,9 +77,6 @@ function CountdownComp.createText()
     return CountdownComp.time
 end
 
-
-
-
 --倒计时更新函数
 function CountdownComp.anticlockwiseUpdate(time)
     --    CountdownComp.second = CountdownComp.second -1
@@ -170,6 +167,12 @@ function CountdownComp.remove_hour()
         end
     end
 
+end
+
+function CountdownComp.exit()
+    CountdownComp.time:removeFromParent()
+    CountdownComp.remove_scheduler()
+    CountdownComp.time = nil
 end
 
 return CountdownComp

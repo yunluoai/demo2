@@ -19,6 +19,7 @@ local EventManager = require("app.manager.EventManager")
 local EventDef = require("app.def.EventDef")
 local ConstDef = require("app.def.ConstDef")
 local LobbyData = require("app.data.LobbyData")
+local MsgManager = require("app.manager.MsgManager")
 
 
 --[[--
@@ -125,6 +126,9 @@ end
 function LobbyScene:onEnter()
     -- 大厅临时状态信息
     self.lobbyData_ = LobbyData:init()
+
+    -- 通知玩家已登陆游戏
+    MsgManager:enterGame()
 
     -- 大厅视图切换事件
     EventManager:regListener(EventDef.ID.LOBBY_VIEW_SWITCH, self, function(code)
