@@ -20,6 +20,7 @@ function MyApp:run()
     StoreData:init() -- 初始化商店
 
     self:enterScene("LoadingScene")
+    -- self:enterScene("FightScene")
 end
 
 return MyApp

@@ -28,13 +28,13 @@ GameData = {
     enemyTime_ = nil,
     sid_ = nil,
     hurt_ = nil,
+    isOver_ = nil,
+    loser_ = nil,
 }
 
 --[[
     初始化函数
-
     @param none
-
     @return none
 ]]
 function GameData:init()
@@ -48,6 +48,8 @@ function GameData:init()
 
     self.bossTime_ =  GameDef.BOSS_CREATE.TIME[1] --boss刷新时间
     self.enemyTime_ = 0
+
+    self.isOver_ = false
 
 end
 
@@ -82,7 +84,7 @@ end
 
     @return none
 ]]
-function GameData:new()
+function GameData:new(game)
     local gameData = {}
     self.__index = self
     setmetatable(gameData,self)
@@ -96,13 +98,16 @@ end
     @return none
 ]]
 function GameData:addPlayer(msg)
+    print("sssssssssss  gamedata addplayer sssssssssssssssss")
     self.player1_  = Player:new(self,1,msg[1])
+      print("sssssssssss  gamedata addplayer sssssssssssssssss")
     self.player1_:createCard()
     self.sid_[1] = msg[1].sid
     self.player2_  = Player:new(self,2,msg[1])
     self.player2_:createCard()
     self.sid_[2] = msg[2].sid
     self.isPause_ = false
+    print("sssssssssss  gamedata addplayer sssssssssssssssss")
 end
 
 --[[
@@ -111,7 +116,6 @@ end
     @return none
 ]]
 function GameData:createEnemy()
-
     --怪物血量计算
     local hp_rise = 100 --没出现boss之前的血量公差
     if(self.bossFrequency_ >= 1) then
@@ -151,6 +155,7 @@ end
     --信息处理
 ]]
 function GameData:msgDispose(msg,sid)
+    print("sssssssssss  gamedata msgdispose sssssssssssssssss")
     if msg["size"] == "CREATE_CARD" then
         if sid == self.sid_[1] then
             self.player1_:createCard()
@@ -169,7 +174,52 @@ function GameData:msgDispose(msg,sid)
         else
             self.player2_:compoundCard(msg)
         end
+    elseif msg["size"] == "PLAYER_GIVEIN" then
+        if sid == self.sid_[1] then
+            self.loser_ = self.player1_.id_
+            self.isOver_ = true
+        else
+            self.loser_ = self.player2_.id_
+            self.isOver_ = true
+        end
     end
+    print("sssssssssss  gamedata msgdispose sssssssssssssssss")
+end
+
+function GameData:gameOver()
+    print("game over")
+    local  msg = {}
+    msg["size"] = "GAMEOVER"
+    local data = {}
+    if self.loser_ == self.player1_.id_ then
+        local winner = {
+            id = self.player2_.id_,
+            sid = self.sid_[2],
+            integral = self.player2_.integral_,
+        }
+        local loser = {
+            id = self.player1_.id_,
+            sid  = self.sid_[1],
+            integral = self.player1_.integral_,
+        }
+        data["winner"] = winner
+        data["loser"] = loser
+    else
+        local winner = {
+            id = self.player1_.id_,
+            sid = self.sid_[1],
+            integral = self.player1_.integral_,
+        }
+        local loser = {
+            id = self.player2_.id_,
+            sid  = self.sid_[2],
+            integral = self.player2_.integral_,
+        }
+        data["winner"] = winner
+        data["loser"] = loser
+    end
+    msg["data"] = data
+    return msg
 end
 
 --[[
@@ -180,13 +230,13 @@ end
     @return none
 ]]
 function GameData:createBoss()
-     self.bossFrequency_ = self.bossFrequency_ + 1
+    self.bossFrequency_ = self.bossFrequency_ + 1
     self.player1_:createBoss(1)
     self.player2_:createBoss(1)
     if self.bossFrequency_ == 1 then
-        self.bossTime_ = GameDef.BOSS_CREATE.TIME[1]
-    else
         self.bossTime_ = GameDef.BOSS_CREATE.TIME[2]
+    else
+        self.bossTime_ = GameDef.BOSS_CREATE.TIME[3]
     end
     self.enemyFrequency_ = 0
 end
@@ -201,6 +251,14 @@ function GameData:update(dt)
     if self.isPause_ then
         return
     end
+
+    if self.isOver_ then
+        print("sssssssss gameover sssssss")
+        return self:gameOver()
+    end
+
+    print("sssssssss update sssssss")
+
     --boss刷新时间
     self.bossTime_ = self.bossTime_ - dt
     if self.bossTime_ <= 0 then

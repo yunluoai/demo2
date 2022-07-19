@@ -20,18 +20,18 @@ local Card = {
 local Enemy = require("lua.inGame.Enemy")
 local EnemyDef = require("lua.inGame.def.EnemyDef")
 local CardDef = require("lua.inGame.def.CardDef")
-local Boss = require("lua.inGame.boss.boss")
+local Boss1 = require("lua.inGame.boss.Boss1")
 
 Player = {
     gameData_ = nil,--玩家对应的gameData
-
+    integral_ = nil,
     hp_ =  nil, --血量值 number 
     sp_ =  nil, --sp值 number 
     id_ = nil, -- id number
     name_ = nil, --名字 string
     level_ = nil,
     createSp_ = nil,
-    EnhanceSp_ = nil,
+
 
     enemyTime_ = 1, --生成敌人的间隔时间
 
@@ -69,6 +69,7 @@ function Player:new(gameData,id,data)
     self.__index = self
     setmetatable(player,self)
     player:init(gameData,id,data)
+    print("palyer new")
     return player
 end
 
@@ -83,20 +84,23 @@ function Player:init(gameData,id,data)
 
     self.gameData_ = gameData
     self.name_ = data["nick"]
+    print("palyer init")
+    self.integral_ = data["integral"]
+    print("palyer init")
     self.id_ = id
     self.level_ = 1
     self.hp_ = 3 --血量值 number 
     self.sp_ = 10000 --sp值 number 
     self.createSp_ = CardDef.CREATE_CARD_SP
-    self.enhanceSp_ = {CardDef.CARD_ENHANCE[1],CardDef.CARD_ENHANCE[1],
-    CardDef.CARD_ENHANCE[1],CardDef.CARD_ENHANCE[1],CardDef.CARD_ENHANCE[1]}
 
+    print("palyer init")
     self.enemyTime_ = 0 --生成敌人的时间
 
     self.bullet_ = {} --子弹实体
     self.enemy_ = {} --敌人实体
     self.card_ = {} --生成的防御塔实体
 
+    print("palyer init")
     self.createEnemyFrequency_ = EnemyDef.FREQUENCY_TIME --生成敌人的时间间隔
     self.enemyId_ = 0
     self.createEnemy_ = {} --待生成的敌人
@@ -106,6 +110,7 @@ function Player:init(gameData,id,data)
     self.deleteCard_ = {}
     self.cardGroup_ = {data["cards"]}
     self.cardPos_ = {}
+    print("palyer init")
     for i = 1,15 do
         self.cardPos_[i] = 0
     end
@@ -113,7 +118,7 @@ function Player:init(gameData,id,data)
     for i = 1,5 do
         self.cardEnhanceLevel_[i] = 1
     end
-
+    
     self.bulletId_ = 0
     self.deleteBullet_ = {}
 
@@ -164,17 +169,20 @@ function Player:randomCardPos()
 end
 
 function Player:enhanceCard(msg)
-    local cardEnhanceLevel = self.cardEnhanceLevel_[msg["size"]]
-    cardEnhanceLevel = cardEnhanceLevel + 1
-    if CardDef.CARD_ENHANCE[cardEnhanceLevel] <= self.sp_ then
+    print("ssss enhance card sssss")
+    local cardEnhanceLevel = self.cardEnhanceLevel_[msg]
+    if CardDef.CARD_ENHANCE[cardEnhanceLevel] > self.sp_ then
+        print("ssss enhance card 1sssss")
     else
-        self.cardEnhanceLevel_[msg["size"]] = self.cardEnhanceLevel_[msg["size"]] + 1
+        self.cardEnhanceLevel_[msg] = self.cardEnhanceLevel_[msg] + 1
+        print("ssss enhance card sssss")
         for k , v in pairs(self.card_) do
-            if v.size_ == msg["size"] then
+            if v.size_ == msg then
                 v:enhance()
             end
         end
         self.sp_ = self.sp_ - CardDef.CARD_ENHANCE[cardEnhanceLevel]
+        print("ssss enhance card sssss")
     end
 end
 
@@ -255,10 +263,10 @@ function Player:createBoss(size)
     self.bossId_ = self.bossId_ + 1
     local id = self.bossId_ 
     local sp = self.gameData_:getBossFrequency()*100
-    self.boss_ = Boss:new(self,id,hp,sp,size)
+    self.boss_ = Boss1:new(self,id,hp,sp,size)
 end
 
-function Player:removeBoss(size)
+function Player:removeBoss()
     self.deleteBoss_ = true
 end
 
@@ -442,17 +450,14 @@ function Player:update(dt)
     local bullet1 = {}
     local boss1 = nil
 
-    for k, v in pairs(self.cardEnhanceLevel_) do
-        enhance[k] = {
-            sp = CardDef.CARD_ENHANCE[v+1]
-        }
+    for i = 1 ,#self.cardEnhanceLevel_ do
+        enhance[i] = self.cardEnhanceLevel_[i]
     end
-    
 
     info[1] = {sp = self.sp_,hp = self.hp_,createSp = self.createSp_,
-        enemy = enemy, card = card, bullet = bullet, boss = boss,enhance = enhance}
+        enemy = enemy, card = card, bullet = bullet, boss = boss,enhance = enhance, name = self.name_}
     info[2] = {sp = self.sp_,hp = self.hp_,createSp = self.createSp_,
-        enemy = enemy1, card = card1, bullet = bullet1, boss = boss1}
+        enemy = enemy1, card = card1, bullet = bullet1, boss = boss1,enhance = enhance, name = self.name_}
 
     --返回敌人信息
     for k, v in pairs(self.enemy_) do
@@ -493,8 +498,6 @@ function Player:update(dt)
             id = self.bullet_[k]:getId(),size = self.bullet_[k]:getSize(),
         }
     end
-
-
 
     if self.boss_ == nil then
     else

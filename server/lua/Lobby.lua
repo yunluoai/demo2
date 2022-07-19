@@ -235,6 +235,8 @@ function update()
 		sendMsg2Game(cjson.encode(msg))
 	elseif (msg["type"] == MsgDef.REQ_TYPE.ENFORCE_TOWER) then
 		sendMsg2Game(cjson.encode(msg))
+	elseif (msg["type"] == MsgDef.REQ_TYPE.GAME_GIVEIN) then
+		sendMsg2Game(cjson.encode(msg))
 	end
 end
 

@@ -105,7 +105,8 @@ function Bullet:attack()
         else
             color = 2
         end
-        local hurt = Hurt:new(self.player_,self.hurt_, self.x_, self.y_,self.x1_, self.y1_, color,self.player_.gameData_)
+        local hurt = Hurt:new(self.player_,self.hurt_, self.enemy_.x_, self.enemy_.y_, 
+        self.enemy_.x1_, self.enemy_.y1_, color,self.player_.gameData_)
         table.insert(self.player_.gameData_.hurt_,hurt)
 
         self.enemy_.hp_ = self.enemy_.hp_ - self.hurt_

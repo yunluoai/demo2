@@ -25,6 +25,7 @@ function initGameModule()
     --init game module here
     print("init game module succeed")
     gameData = GameData:new()
+    print(gameData)
 end
 
 --[[
@@ -44,6 +45,7 @@ function update(dt)
         Utils.print_dump(msg)
         if (msg["type"] == MsgDef.REQ_TYPE.SETUP_CONNECTION) then
             table.insert(sidMap_, msg["sid"])
+            print(gameData)
             gameData:addPlayer(msg["data"],msg["sid"])
         elseif (msg["type"] == MsgDef.REQ_TYPE.CREATE_TOWER) then
             gameData:msgDispose(msg["data"],msg["sid"])
@@ -51,14 +53,40 @@ function update(dt)
             gameData:msgDispose(msg["data"],msg["sid"])
         elseif (msg["type"] == MsgDef.REQ_TYPE.ENFORCE_TOWER) then
             gameData:msgDispose(msg["data"],msg["sid"])
+        elseif (msg["type"] == MsgDef.REQ_TYPE.GAME_GIVEIN) then
+            gameData:msgDispose(msg["data"],msg["sid"])
         end
     end
 
+    if gameData == nil then
+        return
+    end
+
     local data = gameData:update(dt)
+    Utils.print_dump(data)
+
     if data == nil then
         return
     end
-    print("sssss send msg ssssssssssssssss")
+
+    if data["size"] == "GAMEOVER" then
+        print("sssss send msg2 ssssssssssssssss")
+        -- gameData = nil
+        print("sssss send msg2 ssssssssssssssss")
+        -- gameData = GameData:new()
+        print("sssss send msg2 ssssssssssssssss")
+        local ack = {}
+        print("sssss send msg2 ssssssssssssssss")
+        ack["type"] = MsgDef.ACK_TYPE.GAME_OVER
+        ack["data"] = data
+        print("sssss send msg2 ssssssssssssssss")
+        -- sendMsg2Lobby(ack)
+        print("sssss send msg2 ssssssssssssssss")
+        msSleep(1000)
+        return
+    end
+
+    print("sssss send msg1 ssssssssssssssss")
     for i =1,2 do
         local ack = {}
         ack["type"] = MsgDef.ACK_TYPE.GAME_SYNC

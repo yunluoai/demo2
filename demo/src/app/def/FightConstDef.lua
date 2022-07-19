@@ -13,8 +13,7 @@ local FightConstDef = {
         CARD_SIZE_INTERVAL = 15,
         CARD_POSITION_Y = 20,--card距离顶端距离
 
-        CARD_LEVEL_SIZE_X = 36,--card等级展示尺寸
-        CARD_LEVEL_SIZE_Y = 20,
+        CARD_LEVEL_SIZE = 20, --敌人level字号
         CARD_LEVEL_POSITION_Y = 85,--card的level距离顶端距离
 
         CARD_TYPE_SIZE_X = 17,--card种类展示尺寸
@@ -44,9 +43,8 @@ local FightConstDef = {
         CARD_SIZE_INTERVAL = 15,
         CARD_POSITION_Y = 150,--card距离底部距离
 
-        CARD_LEVEL_SIZE_X = 54,--card等级展示尺寸
-        CARD_LEVEL_SIZE_Y = 30,
-        CARD_LEVEL_POSITION_Y = 60,--card的level距离顶端距离
+        CARD_LEVEL_SIZE =  26,
+        CARD_LEVEL_POSITION_Y = 60,--card的level距离低底端距离
 
         CARD_TYPE_SIZE_X = 25.5,--card种类展示尺寸
         CARD_TYPE_SIZE_Y = 31.5,
@@ -139,6 +137,9 @@ local FightConstDef = {
          
         NUM_POSITION_Y =  435,--sp随时间增长的文字的位置
         NUM_SIZE = 25,--字号
+    },
+    SP_ENHANCE = {
+        100,200,400,700
     }
 }
 

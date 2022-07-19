@@ -183,7 +183,7 @@ function GamePlayer:update(data)
             self.boss_:update(data.boss)
         end
     end
-
+    
 end
 
 return GamePlayer
