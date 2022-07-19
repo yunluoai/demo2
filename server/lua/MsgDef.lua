@@ -22,9 +22,13 @@ MsgDef.REQ_TYPE = { -- 客户端的请求类型
 	END_MAPPING = 11, -- 终止匹配信息
 	CREATE_GAME = 12, -- 创建游戏
 
+	GAME_GIVEIN = 13 , --投降
+
+
 	SEND_STORE_DATA = 20, -- 接收商店数据
 	ENTER_GAME = 21, -- 进入游戏
 	QUIT_GAME = 22, -- 退出游戏
+
 }
 
 MsgDef.ACK_TYPE = { -- 服务端的响应类型

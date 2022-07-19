@@ -147,26 +147,28 @@ function InfoLayer:initView()
         sprite:setTouchEnabled(true)
 
         --敌方卡片的等级
-        local sprite1 = display.newSprite(self.enemyCardGroup_[i]:getLevelImg())
-        sprite1:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE_X/36)
-        sprite1:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE_Y/20)
-        sprite1:setAnchorPoint(0.5, 1.0)
-        sprite1:setPosition(cardX + 0.45*self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_SIZE_X,
-            display.top - self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_POSITION_Y  )
-        self:addChild(sprite1)
-        self.enemyCardSprites_[i+5] = sprite1
+        local level = cc.Label:createWithTTF("LV.00","font/fzbiaozjw.ttf",FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE)
+        level:setScaleX(self.bgScaleFactorX_)
+        level:setScaleY(self.bgScaleFactorY_)
+        level:setAnchorPoint(0.0, 1.0)
+        level:setPosition(cardX,display.top - self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_POSITION_Y )
+        self:addChild(level)
+        level:enableOutline(cc.c4b(0, 0, 0, 255),1)
+        self.enemyCardSprites_[i+5] = level
+        print( self.enemyCardSprites_[i+5] )
         --敌方卡片的攻击类型
-        local sprite2 = display.newSprite(self.enemyCardGroup_[i]:getTypeImg())
-        sprite2:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_TYPE_SIZE_X/34)
-        sprite2:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_TYPE_SIZE_X/42)
-        sprite2:setAnchorPoint(1.0, 1.0)
-        sprite2:setPosition(cardX + 0.9*self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_SIZE_X,
+        local type = display.newSprite(self.enemyCardGroup_[i]:getTypeImg())
+        type:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_TYPE_SIZE_X/34)
+        type:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_TYPE_SIZE_X/42)
+        type:setAnchorPoint(1.0, 1.0)
+        type:setPosition(cardX + 0.9*self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_SIZE_X,
             display.top - self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_TYPE_POSITION_Y)
         cardX = cardX + self.bgScaleFactorX_*(FightConstDef.ENEMY_SIZE.CARD_SIZE_X
                                 + FightConstDef.ENEMY_SIZE.CARD_SIZE_INTERVAL) 
-        self:addChild(sprite2)
-        self.enemyCardSprites_[i+10] = sprite2
+        self:addChild(type)
+        self.enemyCardSprites_[i+10] = type
     end
+
     --敌方段位的图片原尺寸 60*49
     --敌方段位的设计尺寸 60*49
     local enemyLevel = display.newSprite("image/fight/fight/enemy_mark_icon.png")
@@ -208,14 +210,32 @@ function InfoLayer:initView()
         sprite:setPosition(cardX, display.bottom + self.bgScaleFactorY_*FightConstDef.ME_SIZE.CARD_POSITION_Y )
         self:addChild(sprite)
         self.cardSprites_[i] = sprite
+        sprite:addNodeEventListener(cc.NODE_TOUCH_EVENT, function(event)
+            if event.name == "began" then
+                return true
+            end
+            if event.name == "ended" then
+                local msg  = {}
+                local data = {}
+                data["size"] = "ENHANCE_CARD"
+                data["data"] = i
+                msg["data"] = data
+                GameData:send(MsgDef.REQ_TYPE.ENFORCE_TOWER,msg)
+            end
+        end)
+        sprite:setTouchMode(cc.TOUCH_MODE_ONE_BY_ONE) 
+        sprite:setTouchEnabled(true)
+
         --己方卡片的等级
-        local sprite1 = display.newSprite(self.cardGroup_[i]:getLevelImg())
-        sprite1:setScaleX(self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_LEVEL_SIZE_X/36)
-        sprite1:setScaleY(self.bgScaleFactorY_*FightConstDef.ME_SIZE.CARD_LEVEL_SIZE_Y/20)
-        sprite1:setAnchorPoint(0.55, 1.0)
-        sprite1:setPosition(cardX,display.bottom + self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_LEVEL_POSITION_Y  )
-        self:addChild(sprite1)
-        self.cardSprites_[i+5] = sprite1
+        local level = cc.Label:createWithTTF("LV.00","font/fzbiaozjw.ttf",FightConstDef.ME_SIZE.CARD_LEVEL_SIZE)
+        level:setScaleX(self.bgScaleFactorX_)
+        level:setScaleY(self.bgScaleFactorY_)
+        level:setAnchorPoint(0.55, 1.0)
+        level:setPosition(cardX,display.bottom + self.bgScaleFactorY_*FightConstDef.ME_SIZE.CARD_LEVEL_POSITION_Y)
+        self:addChild(level)
+        level:enableOutline(cc.c4b(0, 0, 0, 255),1)
+        self.cardSprites_[ i + 5 ] = level
+
         --己方卡片的攻击类型
         local sprite2 = display.newSprite(self.cardGroup_[i]:getTypeImg())
         sprite2:setScaleX(self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_TYPE_SIZE_X/34)
@@ -225,6 +245,7 @@ function InfoLayer:initView()
             display.bottom + self.bgScaleFactorY_*FightConstDef.ME_SIZE.CARD_TYPE_POSITION_Y)
         self:addChild(sprite2)
         self.cardSprites_[i+10] = sprite2
+
         --己方sp值图片
         local sp = display.newSprite("image/fight/fight/sp_bg.png")
         sp:setScaleX(self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_SP_SIZE_X/124)
@@ -234,7 +255,7 @@ function InfoLayer:initView()
         self:addChild(sp)
         self.cardSprites_[i+15] =  sp
         --己方sp值文本
-        local sp2 = cc.Label:createWithTTF("100","font/fzbiaozjw.ttf",FightConstDef.ME_SIZE.CARD_SP_NUM_SIZE)
+        local sp2 = cc.Label:createWithTTF("0","font/fzbiaozjw.ttf",FightConstDef.ME_SIZE.CARD_SP_NUM_SIZE)
         sp2:setScaleX(self.bgScaleFactorX_)
         sp2:setScaleY(self.bgScaleFactorY_)
         sp2:setAnchorPoint(0.4, 0.5)
@@ -378,7 +399,11 @@ function InfoLayer:initView()
     self.giveInSprite_ = giveIn
     giveIn:addTouchEventListener(function(sender, eventType)
 		if 2 == eventType then
-            print("giveIn")
+            local msg = {}
+            local data = {}
+            data["size"] = "PLAYER_GIVEIN"
+            msg["data"] = data
+            GameData:send(MsgDef.REQ_TYPE.GAME_GIVEIN,msg)
 		end
 	end)
 
@@ -456,7 +481,6 @@ function InfoLayer:initView()
     self:addChild(spText1)
     spText1 :enableOutline(cc.c4b(0, 0, 0, 255),1)
     self.spSprite_[2] = spText1
-
 end
 
 --[[
@@ -518,6 +542,17 @@ function InfoLayer:update()
 
     self.life_ = GameData:getMePlayer():getHp()
     self:resetLife()
+
+    local enhance = GameData:getEnhance()
+    for  i= 1,5 do
+        self.cardSprites_[i+5]:setString(string.format("LV.0%d",enhance[i]))
+        self.enemyCardSprites_[i+5]:setString(string.format("LV.0%d",enhance[i+5]))
+        self.cardSprites_[i+20]:setString(string.format("%d", FightConstDef.SP_ENHANCE[enhance[i]]))
+    end
+
+    local name = GameData:getName() 
+    self.enemyNameSprite_:setString(name[2])
+    self.nameSprite_:setString(name[1])
 
     self.sp_ =  GameData:getMePlayer():getSp()
     self.createSp_ =  GameData:getMePlayer():getCreateSp()

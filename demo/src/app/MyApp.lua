@@ -19,6 +19,7 @@ function MyApp:run()
     StoreData:init() -- 初始化商店(单机情况)
 
     self:enterScene("LoadingScene")
+    -- self:enterScene("FightScene")
 end
 
 return MyApp
