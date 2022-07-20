@@ -50,29 +50,32 @@ end
     @return none
 ]]
 function Card3:init(player,x,y,x1,y1,id,pos,starLevel)
+    self.size_ = 3
     self.x_ = x
     self.y_ = y
     self.x1_ = x1
     self.y1_ = y1
     self.id_ = id
-    self.atk_ = 40
-    self.atkEnhance_ = 20
+    self.player_ = player
+    local data = self.player_.cardGroup_[1][self.size_..""]
+    self.atk_ = data.atk
+    self.atkEnhance_ = data.atkDelta
     self.state_ = {}
     self.cha_ = 5
     self.chr_ = 2
-    self.fireCd_ = 0.8
+    self.fireCd_ = data.fireCd
     self.player_ = player
     self.time_ = 0
     self.size_ = 3
     self.pos_ = pos
     self.enhanceLevel_ = self.player_.cardEnhanceLevel_[self.size_]
     self.starLevel_ = starLevel
+    self.skillValue_ = data.skillOne
+    self.skillValueEnhance_ = data.skillOneDelta
     self:setStarLevel()
     for i = 1,self.enhanceLevel_ -1 do
         self:enhance()
     end
-    self.skillValue_ = 120
-    self.skillValueEnhance_ = 40
     self.atkCnt_ = 0
 end
 
