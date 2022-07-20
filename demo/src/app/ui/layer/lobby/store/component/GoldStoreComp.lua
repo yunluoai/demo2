@@ -107,7 +107,7 @@ function GoldStoreComp:initView()
     -- 卡片
     for i = 1, 6 do
         local index = string.format("%d", i)
-        local card = GoldStoreCardComp.new(self.cards_[index], self.cards_[index].cardId) -- 用商店卡牌的Id作为tag
+        local card = GoldStoreCardComp.new(self.cards_[index], self.cards_[index].cardId, i)
         self.cardContainer_:addChild(card)
         card:setPosition((0.3*((i-1)%3)+0.2)*ConstDef.WINDOW_SIZE.GOLD_STORE.WIDTH,
                 (0.7-math.floor((i-1)/3)*0.4)*ConstDef.WINDOW_SIZE.GOLD_STORE.HEIGHT)
@@ -124,17 +124,15 @@ end
 ]]
 function GoldStoreComp:onEnter()
     EventManager:regListener(EventDef.ID.GOLD_STORE_REFRESH, self, function()
+
+        print("26783657823567356834756347856478")
+
         self.cards_ = StoreData:getGoldStoreCards()
-
-        print(123456)
-        print(varDump(self.cards_))
-        print(123456)
-
         self.cardContainer_:removeAllChildren()
         for i = 1, 6 do
             -- 以cardId作为tag
             local index = string.format("%d", i)
-            local card = GoldStoreCardComp.new(self.cards_[index], self.cards_[index].cardId)
+            local card = GoldStoreCardComp.new(self.cards_[index], self.cards_[index].cardId, i)
             self.cardContainer_:addChild(card)
             card:setPosition((0.3*((i-1)%3)+0.2)*ConstDef.WINDOW_SIZE.GOLD_STORE.WIDTH,
                     (0.7-math.floor((i-1)/3)*0.4)*ConstDef.WINDOW_SIZE.GOLD_STORE.HEIGHT)

@@ -25,7 +25,7 @@ local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
 
     @return none
 ]]
-function GoldStorePurchaseConfirmDialog:ctor(id, pieceNum, cost, bg, tag)
+function GoldStorePurchaseConfirmDialog:ctor(id, pieceNum, cost, bg, tag, no)
     GoldStorePurchaseConfirmDialog.super.ctor(self)
 
     self.container_ = nil -- 全局容器
@@ -35,6 +35,7 @@ function GoldStorePurchaseConfirmDialog:ctor(id, pieceNum, cost, bg, tag)
     self.cost_ = cost
     self.bg_ = bg
     self.tag_ = tag
+    self.no_ = no
 
     self:initView()
     self:hideView()
@@ -48,7 +49,6 @@ end
     @return none
 ]]
 function GoldStorePurchaseConfirmDialog:initView()
-
     self.container_ = ccui.Layout:create()
     self.container_:setContentSize(display.width, display.height)
     self.container_:setAnchorPoint(0.5, 0.5)
@@ -108,6 +108,9 @@ function GoldStorePurchaseConfirmDialog:initView()
             -- 执行对应的操作
             local state = PlayerData:purchaseCard(self.id_, self.pieceNum_, self.cost_)
             if state == 0 then
+
+                PlayerData:setGoldStoreAvailability(self.no_, false)
+
                 EventManager:doEvent(EventDef.ID.CARD_PURCHASE, self.tag_)
                 print("Purchase success!")
                 self:hideView()

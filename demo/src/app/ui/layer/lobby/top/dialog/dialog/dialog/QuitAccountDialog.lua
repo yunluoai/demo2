@@ -8,7 +8,7 @@
 ]]
 local QuitAccountDialog = class("QuitAccountDialog", require("app.ui.layer.BaseLayer"))
 local ConstDef = require("app.def.ConstDef")
-
+local MsgManager = require("app.manager.MsgManager")
 local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
 
 --[[--
@@ -102,6 +102,9 @@ end
     @return none
 ]]
 function QuitAccountDialog:exitAccount()
+
+    MsgManager:quitGame()
+
     cc.UserDefault:getInstance():setStringForKey("nick", nil)
     cc.UserDefault:getInstance():setStringForKey("pwd", nil)
     cc.UserDefault:getInstance():setStringForKey("pid", nil)

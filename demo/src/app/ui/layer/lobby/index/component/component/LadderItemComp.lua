@@ -47,7 +47,7 @@ function LadderItemComp:initParam(index, award, tag)
     self.index_ = index
     self.award_ = award
     self.tag_ = tag
-    self.ifGot_ = PlayerData:getIfGot(index) -- 奖励是否已经获得
+    self.ifGot_ = PlayerData:selectLadderAward(index) -- 奖励是否已经获得
     self.integral_ = PlayerData:getIntegral() -- 奖杯数
     self.point_ = 25+50*(self.index_-1) -- 奖励点
     self.ifUnlocked_ = PlayerData:getIntegral()-self.point_ >= 0 and true or false -- 奖励是否已经解锁
@@ -173,7 +173,7 @@ function LadderItemComp:initView()
                     end
 
                     self.ifGot_ = true
-                    PlayerData:setIfGot(self.index_, true)
+                    PlayerData:setLadderAward(self.index_, true)
                     self.cardBG_:setBackGroundImage("image/lobby/index/ladder/got_border.png")
                     self.cardIcon_:loadTexture("image/lobby/index/ladder/got_icon.png")
                     self:update()
@@ -211,7 +211,7 @@ function LadderItemComp:onEnter()
         self.lineFG_:setScale(scale , 1)
 
         -- 卡片背景
-        self.ifGot_ = PlayerData:getIfGot(self.index_)
+        self.ifGot_ = PlayerData:selectLadderAward(self.index_)
         self.ifUnlocked_ = PlayerData:getIntegral()-self.point_ >= 0 and true or false
 
         local bg = nil
@@ -236,7 +236,7 @@ function LadderItemComp:onEnter()
     EventManager:regListener(EventDef.ID.BOX_PURCHASE, self, function(tag)
         if self.tag_ == tag then
             self.ifGot_ = true -- 设置宝箱已经获得
-            PlayerData:setIfGot(self.index_, true)
+            PlayerData:setLadderAward(self.index_, true)
             self.cardBG_:setBackGroundImage("image/lobby/index/ladder/got_border.png")
             self.cardIcon_:loadTexture("image/lobby/index/ladder/got_icon.png")
             self:update()

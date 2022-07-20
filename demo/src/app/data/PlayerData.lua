@@ -44,6 +44,7 @@ local headPortrait_ = "image/lobby/top/default_avatar.png" -- 类型string，头
 local gold_ = 0 -- 类型number，金币 默认值
 local diamond_ = 0 -- 类型number，钻石 默认值
 local ladderAward_ = {} -- 类型table，天梯奖励领取情况
+local goldStoreAvailability_ = {} -- 类型table，金币商店可用性情况
 
 local cardGroup_ = {} -- 类型card，所有卡牌 默认值
 local fightGroupIndex_ = 1 -- 类型number，玩家出战用的卡组索引 默认值
@@ -59,7 +60,28 @@ local currentGroupThree_ = {} -- 当前阵容3
     @return none
 ]]
 function  PlayerData:init()
-    self:initCard()
+    -- 初始化卡牌
+    for i = 1, 20 do
+        local card = Card[i].new(0,0)
+        cardGroup_[i] = card
+    end
+
+    for i = 1, 5 do
+        currentGroupOne_[i] = cardGroup_[i]
+        currentGroupTwo_[i] = cardGroup_[i]
+        currentGroupThree_[i] = cardGroup_[i]
+    end
+
+    -- 初始化天梯奖励
+    for i = 1, 10 do
+        ladderAward_[i] = false
+    end
+
+    -- 初始化金币商店可用性
+    for i = 1, 6 do
+        goldStoreAvailability_[i] = true
+    end
+
 end
 
 --[[--
@@ -217,11 +239,11 @@ function  PlayerData:getDiamond()
 end
 
 --[[--
-   获取天梯奖励表
+   获取所有天梯奖励
 
    @param none
 
-   @return number
+   @return table
 ]]
 function  PlayerData:getLadderAward()
     return ladderAward_
@@ -231,12 +253,12 @@ end
     设置天梯奖励领取情况
 
     @param index number 待设置的索引
-    @param ifGot boolean 是否已经获得
+    @param value boolean 是否已经获得
 
     @return none
 ]]
-function  PlayerData:setIfGot(index, ifGot)
-    ladderAward_[index] = ifGot
+function  PlayerData:setLadderAward(index, value)
+    ladderAward_[index] = value
 end
 
 --[[--
@@ -246,8 +268,42 @@ end
 
    @return boolean 是否已被领取
 ]]
-function  PlayerData:getIfGot(index)
+function  PlayerData:selectLadderAward(index)
     return ladderAward_[index]
+end
+
+--[[--
+   获取所有金币商店可用性情况
+
+   @param none
+
+   @return table
+]]
+function  PlayerData:getGoldStoreAvailability()
+    return goldStoreAvailability_
+end
+
+--[[--
+   设置金币商店可用性情况
+
+   @param index number
+   @param value boolean
+
+   @return number
+]]
+function  PlayerData:setGoldStoreAvailability(index, value)
+    goldStoreAvailability_[index] = value
+end
+
+--[[--
+   获得金币商店可用性情况
+
+   @param index number
+
+   @return number
+]]
+function  PlayerData:selectGoldStoreAvailability(index)
+    return goldStoreAvailability_[index]
 end
 
 --[[--
@@ -258,6 +314,7 @@ end
    @return card 卡牌
 ]]
 function  PlayerData:getCardById(id)
+    id = tonumber(id)
     for i = 1, #cardGroup_ do
         if cardGroup_[i]:getId() == id then
             return cardGroup_[i]
@@ -482,6 +539,7 @@ end
    1 - fail - 金币不足
 ]]
 function  PlayerData:purchaseCard(id, pieceNum, cost)
+
     local card = self:getCardById(id)
     if cost <= gold_ then
         card:setNum(card:getNum() + pieceNum)
@@ -573,31 +631,6 @@ function  PlayerData:obtainDiamond(num)
 end
 
 --[[
-    init
-    从服务器和本地文件读取卡片完善信息
-
-    @param none
-
-    @return none
-]]
-function PlayerData:initCard()
-    print("began init card")
-
-    for i = 1, 20 do
-        local card = Card[i].new(0,0)
-        cardGroup_[i] = card
-    end
-
-    for i = 1, 5 do
-        currentGroupOne_[i] = cardGroup_[i]
-        currentGroupTwo_[i] = cardGroup_[i]
-        currentGroupThree_[i] = cardGroup_[i]
-    end
-
-    print("end init card")
-end
-
---[[
     将玩家卡组转换成服务器可以存储的格式
 
     @param none
@@ -680,6 +713,22 @@ function PlayerData:transLadderAward()
         ladderAward[index] = ladderAward_[i]
     end
     return ladderAward
+end
+
+--[[
+    将金币商店领取情况转换成服务器可以存储的格式
+
+    @param none
+
+    @return none
+]]
+function PlayerData:transGoldStoreAvailability()
+    local goldStoreAvailability = {}
+    for i = 1, 6 do
+        local index = string.format("%d", i)
+        goldStoreAvailability[index] = goldStoreAvailability_[i]
+    end
+    return goldStoreAvailability
 end
 
 return PlayerData

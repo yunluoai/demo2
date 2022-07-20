@@ -154,7 +154,6 @@ function PictorialCardComp:onEnter()
         end
     end)
     EventManager:regListener(EventDef.ID.BOX_PURCHASE, self, function()
-        print(789)
         self:update()
     end)
 end

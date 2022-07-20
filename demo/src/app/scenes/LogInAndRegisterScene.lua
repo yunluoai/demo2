@@ -198,9 +198,19 @@ function LogInAndRegisterScene:onEnter()
 
     end)
     -- 监听登录失败
-    EventManager:regListener(EventDef.ID.LOGIN_FAIL, self, function()
+    EventManager:regListener(EventDef.ID.LOGIN_FAIL, self, function(errorType)
         TCP.unRegListener(MsgDef.ACK_TYPE.LOGIN_FAIL)
-        local dialog = LoginErrDialog.new("用户名或密码错误")
+        local dialog = nil
+
+        print("lalallalala")
+        print(errorType)
+
+        if errorType == 1 then
+            dialog = LoginErrDialog.new("该账号已经登录!")
+        elseif errorType == 2 then
+            dialog = LoginErrDialog.new("用户名或密码错误!")
+        end
+
         DialogManager:showDialog(dialog)
     end)
     -- 监听注册成功

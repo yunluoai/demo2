@@ -22,12 +22,12 @@ local MsgManager = require("app.manager.MsgManager")
 
     @return none
 ]]
-function GoldStoreCardComp:ctor(storeCard, tag)
+function GoldStoreCardComp:ctor(storeCard, tag, no)
     GoldStoreCardComp.super.ctor(self)
 
     self.container_ = nil -- 全局容器
 
-    self:initParam(storeCard, tag)
+    self:initParam(storeCard, tag, no)
     self:initView()
 end
 --[[--
@@ -37,10 +37,11 @@ end
 
     @return none
 ]]
-function GoldStoreCardComp:initParam(storeCard, tag)
+function GoldStoreCardComp:initParam(storeCard, tag, no)
 
     self.storeCard_ = storeCard
     self.tag_ = tag
+    self.no_ = no
     self.cardId_ = self.storeCard_.cardId
     self.pieceNum_ = self.storeCard_.pieceNum
     self.cost_ = self.storeCard_.cost
@@ -125,7 +126,7 @@ function GoldStoreCardComp:initView()
     -- 蒙版
     self.mask_ = ccui.ImageView:create("image/lobby/store/gold/mask.png")
     self.mask_:setOpacity(255/2)
-    self.mask_:setVisible(false)
+    self.mask_:setVisible(not PlayerData:selectGoldStoreAvailability(self.no_))
     self:addChild(self.mask_)
 
     -- 容器事件
@@ -143,7 +144,7 @@ function GoldStoreCardComp:initView()
             if self.type_ == 3 then
                 local dialog = GoldStorePurchaseConfirmDialog.new(
                         self.cardId_, self.pieceNum_, self.cost_,
-                        self.cardSprite_, self.tag_)
+                        self.cardSprite_, self.tag_, self.no_)
                 DialogManager:showDialog(dialog)
             else -- 免费资源
                 -- 动画素材Fatal
@@ -154,6 +155,8 @@ function GoldStoreCardComp:initView()
                     PlayerData:obtainDiamond(self.pieceNum_)
                     EventManager:doEvent(EventDef.ID.DIAMOND_OBTAIN)
                 end
+
+                PlayerData:setGoldStoreAvailability(1, false)
 
                 self.mask_:setVisible(true)
                 self:update()

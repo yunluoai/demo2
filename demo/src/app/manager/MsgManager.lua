@@ -28,7 +28,6 @@ function MsgManager:recPlayerData()
 
     TCP.regListener(MsgDef.ACK_TYPE.PLAYER_DATA_SEND_SUCCEED, function(resp)
         -- 加载基本信息
-        print(varDump(resp))
         PlayerData:setName(resp.data.nick)
         PlayerData:setPassword(resp.data.pwd)
         PlayerData:setId(resp.data.pid)
@@ -45,6 +44,7 @@ function MsgManager:recPlayerData()
 
         -- 加载卡组信息
         local cardGroup = resp.data.cardGroup
+
         for i = 1, 20 do
             local index = string.format("%d", i)
             PlayerData:getCardGroup()[i]:setNum(cardGroup[index].pieceNum)
@@ -63,6 +63,12 @@ function MsgManager:recPlayerData()
             PlayerData:getCurrentCardGroup(1)[i] = PlayerData:getCardGroup()[currentGroupOne[index]]
             PlayerData:getCurrentCardGroup(2)[i] = PlayerData:getCardGroup()[currentGroupTwo[index]]
             PlayerData:getCurrentCardGroup(3)[i] = PlayerData:getCardGroup()[currentGroupThree[index]]
+        end
+
+        -- 加载金币商店领取情况
+        for i = 1, 6 do
+            local index = string.format("%d", i)
+            PlayerData:getGoldStoreAvailability()[i] = resp.data.goldStoreAvailability[index]
         end
 
         EventManager:doEvent(EventDef.ID.INIT_PLAYER_DATA)
@@ -90,12 +96,15 @@ function MsgManager:sendPlayerData()
         diamond=PlayerData:getDiamond(),
         fightGroupIndex=PlayerData:getFightCardGroupIndex(),
         ladderAward=PlayerData:transLadderAward(),
+        goldStoreAvailability=PlayerData:transGoldStoreAvailability(),
         cardGroup=PlayerData:transCardGroup(),
         currentGroupOne=PlayerData:transCurrentGroupOne(),
         currentGroupTwo=PlayerData:transCurrentGroupTwo(),
         currentGroupThree=PlayerData:transCurrentGroupThree(),
-    }, MsgDef.ACK_TYPE.PLAYER_DATA_REC_SUCCEED, function(resp)
-        print(resp)
+    })
+
+    TCP.regListener(MsgDef.ACK_TYPE.PLAYER_DATA_REC_SUCCEED, function(resp)
+
     end)
 end
 
@@ -135,7 +144,9 @@ function MsgManager:startMapping()
         nick=PlayerData:getName(), -- 用户名
         integral=PlayerData:getIntegral(), -- 奖杯数
         cards=cards
-    }, MsgDef.ACK_TYPE.MAPPING_SUCCEED, function(resp)
+    })
+
+    TCP.regListener( MsgDef.ACK_TYPE.MAPPING_SUCCEED, function(resp)
         EventManager:doEvent(EventDef.ID.MAPPING_SUCCEED) -- 匹配成功
     end)
 end
@@ -161,13 +172,15 @@ end
 ]]
 function MsgManager:login(nick, pwd)
 
+    TCP.send(MsgDef.REQ_TYPE.LOGIN, {nick=nick, pwd=pwd})
+
     TCP.regListener(MsgDef.ACK_TYPE.LOGIN_SUCCEED, function(resp)
         EventManager:doEvent(EventDef.ID.LOGIN_SUCCEED, resp) -- 登录成功
     end)
-    TCP.regListener(MsgDef.ACK_TYPE.LOGIN_FAIL, function()
-        EventManager:doEvent(EventDef.ID.LOGIN_FAIL) -- 登录失败
+    TCP.regListener(MsgDef.ACK_TYPE.LOGIN_FAIL, function(resp)
+        local errorType = resp.errorType
+        EventManager:doEvent(EventDef.ID.LOGIN_FAIL, errorType) -- 登录失败
     end)
-    TCP.send(MsgDef.REQ_TYPE.LOGIN, {nick=nick, pwd=pwd})
 
 end
 
@@ -181,13 +194,14 @@ end
 ]]
 function MsgManager:register(nick, pwd)
 
+    TCP.send(MsgDef.REQ_TYPE.REGISTER, {nick=nick, pwd=pwd})
+
     TCP.regListener(MsgDef.ACK_TYPE.REGISTER_SUCCEED, function(resp)
         EventManager:doEvent(EventDef.ID.REGISTER_SUCCEED, resp) -- 注册成功
     end)
     TCP.regListener(MsgDef.ACK_TYPE.REGISTER_FAIL, function()
         EventManager:doEvent(EventDef.ID.REGISTER_FAIL) -- 注册失败
     end)
-    TCP.send(MsgDef.REQ_TYPE.REGISTER, {nick=nick, pwd=pwd})
 
 end
 
@@ -200,16 +214,20 @@ end
 ]]
 function MsgManager:recStoreData()
 
+    TCP.send(MsgDef.REQ_TYPE.SEND_STORE_DATA, {pid=PlayerData:getId(), nick=PlayerData:getName()})
+
     TCP.regListener(MsgDef.ACK_TYPE.STORE_DATA_SEND_SUCCEED, function(resp)
-
-        print(varDump(resp))
-
+        -- 通过时间决定是否刷新
+        if cc.UserDefault:getInstance():getStringForKey("date") ~= resp.date then
+            cc.UserDefault:getInstance():setStringForKey("date", resp.date)
+            for i = 1, 6 do
+                PlayerData:setGoldStoreAvailability(i, true)
+            end
+        end
         StoreData:setGoldStoreCards(resp.data)
         EventManager:doEvent(EventDef.ID.GOLD_STORE_REFRESH)
-
     end)
 
-    TCP.send(MsgDef.REQ_TYPE.SEND_STORE_DATA, {pid=PlayerData:getId(), nick=PlayerData:getName()})
 end
 
 --[[

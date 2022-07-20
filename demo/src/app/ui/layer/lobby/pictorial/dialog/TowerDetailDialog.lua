@@ -67,6 +67,7 @@ function TowerDetailDialog:initParam(card)
     self.name_ = self.card_:getName()
     self.rarityTextImg_ = self.card_:getRarityTextImg()
     self.intro_ = self.card_:getIntro()
+    self.level_ = self.card_:getLevel()
 
     -- 功能栏
     self.cost_ = self.card_:getRequireGoldNum()
@@ -238,28 +239,30 @@ function TowerDetailDialog:initView()
     upgradeBtn:setAnchorPoint(0.5, 0.5)
     upgradeBtn:setPosition(0.5*display.width, 0.12*display.height)
     upgradeBtn:addNodeEventListener(cc.NODE_TOUCH_EVENT, function(event)
-        if event.name == "began" then
-            -- 放大事件
-            local ac1 = cc.ScaleTo:create(0.1, 1.1)
-            local ac2 = cc.ScaleTo:create(0.1, 1)
-            local action = cc.Sequence:create(ac1, ac2)
-            upgradeBtn:runAction(action)
-            return true
-        else
-            local state = PlayerData:upgradeCard(self.id_)
+        if self.card_:getLevel() < 12 then -- 等级限制
+            if event.name == "began" then
+                -- 放大事件
+                local ac1 = cc.ScaleTo:create(0.1, 1.1)
+                local ac2 = cc.ScaleTo:create(0.1, 1)
+                local action = cc.Sequence:create(ac1, ac2)
+                upgradeBtn:runAction(action)
+                return true
+            else
+                local state = PlayerData:upgradeCard(self.id_)
 
-            if state == 0 then -- 判断逻辑
-                print("升级成功")
-                audio.playEffect("audio/tower_level_up.ogg", false)
-                EventManager:doEvent(EventDef.ID.CARD_UPGRADE, self.tag_)
-            elseif state == 1 then -- 卡牌不足
-                local dialog = FailDialog.new(ConstDef.FAIL_CODE.UPGRADE_CARD_DEFICIENCY)
-                DialogManager:showDialog(dialog)
-                print("卡牌不足")
-            else -- 金币不足
-                local dialog = FailDialog.new(ConstDef.FAIL_CODE.UPGRADE_GOLD_DEFICIENCY)
-                DialogManager:showDialog(dialog)
-                print("金币不足")
+                if state == 0 then -- 判断逻辑
+                    print("升级成功")
+                    audio.playEffect("audio/tower_level_up.ogg", false)
+                    EventManager:doEvent(EventDef.ID.CARD_UPGRADE, self.tag_)
+                elseif state == 1 then -- 卡牌不足
+                    local dialog = FailDialog.new(ConstDef.FAIL_CODE.UPGRADE_CARD_DEFICIENCY)
+                    DialogManager:showDialog(dialog)
+                    print("卡牌不足")
+                else -- 金币不足
+                    local dialog = FailDialog.new(ConstDef.FAIL_CODE.UPGRADE_GOLD_DEFICIENCY)
+                    DialogManager:showDialog(dialog)
+                    print("金币不足")
+                end
             end
         end
     end)
