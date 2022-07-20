@@ -19,7 +19,8 @@ local Card10 = require("lua.inGame.card.Card10")
 local Utils = require("lua.Utils")
 
 local Card = {
-    Card1,Card2,Card3,Card4,Card5
+    Card1,Card2,Card3,Card4,Card5,
+    Card6,Card7,Card8,Card9,Card10,
 }
 
 local Enemy = require("lua.inGame.Enemy")
@@ -50,10 +51,11 @@ Player = {
     enemyId_ = 0,
 
     cardGroup_ = {}, --出战组
-    deleteCard_ = {},
-    cardId_ = nil,
-    cardPos_ = {},
-    cardEnhanceLevel_ = {},
+    cardGroupId_ = {},
+    deleteCard_ = {},--待删除的卡组
+    cardId_ = {},--出战的卡牌id
+    cardPos_ = {},--卡牌的15个对应位置
+    cardEnhanceLevel_ = {},--5张卡卡牌
 
     bulletGroup_ = {},
     bulletId_ = nil,
@@ -89,23 +91,19 @@ function Player:init(gameData,id,data)
 
     self.gameData_ = gameData
     self.name_ = data["nick"]
-    print("palyer init")
     self.integral_ = data["integral"]
-    print("palyer init")
     self.id_ = id
     self.level_ = 1
     self.hp_ = 3 --血量值 number 
     self.sp_ = 10000 --sp值 number 
     self.createSp_ = CardDef.CREATE_CARD_SP
 
-    print("palyer init")
     self.enemyTime_ = 0 --生成敌人的时间
 
     self.bullet_ = {} --子弹实体
     self.enemy_ = {} --敌人实体
     self.card_ = {} --生成的防御塔实体
 
-    print("palyer init")
     self.createEnemyFrequency_ = EnemyDef.FREQUENCY_TIME --生成敌人的时间间隔
     self.enemyId_ = 0
     self.createEnemy_ = {} --待生成的敌人
@@ -113,9 +111,15 @@ function Player:init(gameData,id,data)
 
     self.cardId_ = 0
     self.deleteCard_ = {}
+    self.cardGroupId_ = {}
+    
     self.cardGroup_ = {data["cards"]}
+
+    for k,v in pairs(self.cardGroup_[1]) do
+        table.insert(self.cardGroupId_,tonumber(k))
+    end
+ 
     self.cardPos_ = {}
-    print("palyer init")
     for i = 1,15 do
         self.cardPos_[i] = 0
     end
@@ -144,6 +148,10 @@ end
 ]]
 function Player:attack(attack)
     self.hp_ = self.hp_ - attack
+    if self.hp_ <= 0 then
+        self.gameData_.loser_ = self.id_
+        self.gameData_.isOver_ = true
+    end
 end
 
 function Player:getBulletId()
@@ -175,18 +183,28 @@ end
 
 function Player:enhanceCard(msg)
     print("ssss enhance card sssss")
+    Utils.print_dump(msg)
     local cardEnhanceLevel = self.cardEnhanceLevel_[msg]
+    if self.cardEnhanceLevel_[msg] == 4 then 
+    end
     if CardDef.CARD_ENHANCE[cardEnhanceLevel] > self.sp_ then
+        if self.cardEnhanceLevel_[msg] == 4 then 
+        end
         print("ssss enhance card 1sssss")
     else
+        if self.cardEnhanceLevel_[msg] == 4 then 
+        end
         self.cardEnhanceLevel_[msg] = self.cardEnhanceLevel_[msg] + 1
         print("ssss enhance card sssss")
         for k , v in pairs(self.card_) do
             if v.size_ == msg then
+                print(v.size_)
                 v:enhance()
             end
         end
+        print(self.sp_)
         self.sp_ = self.sp_ - CardDef.CARD_ENHANCE[cardEnhanceLevel]
+        print(self.sp_)
         print("ssss enhance card sssss")
     end
 end
@@ -246,7 +264,8 @@ function Player:compoundCard(msg)
         x1 = CardDef.POS_UP[pos].X
         y1 = CardDef.POS_UP[pos].Y
         self.cardId_ = self.cardId_ + 1
-        local card = Card10:new(self,x,y,x1,y1,self.cardId_,pos,card1.starLevel_ + 1)
+        print(size)
+        local card = Card[tonumber(self.cardGroupId_[size])]:new(self,x,y,x1,y1,self.cardId_,pos,card1.starLevel_ + 1)
         self.cardPos_[pos] = 1
         self.card_[card.id_..""] = card
         card1:destroy()
@@ -281,18 +300,21 @@ end
     @return 数据
 ]]
 function Player:createCard()
+    print("create card")
 
     if self.sp_ < self.createSp_ then
         return
     end
     local size = math.random(5)
     local isEmpty = false
+    print("create card")
 
     for i = 1,15 do 
         if self.cardPos_[i] == 0 then
             isEmpty = true
         end
     end
+    print("create card")
 
     if isEmpty then
     else
@@ -300,6 +322,7 @@ function Player:createCard()
     end
 
     local pos = self:randomCardPos()
+    print("create card")
 
     local x,y,x1,y1
     x = CardDef.POS_DOWN[pos].X
@@ -309,16 +332,21 @@ function Player:createCard()
 
     self.cardId_ = self.cardId_ + 1
 
-    local card = Card10:new(self,x,y,x1,y1,self.cardId_,pos,1)
+    print(size)
+    Utils.print_dump(self.cardGroupId_)
+    local card = Card[tonumber(self.cardGroupId_[size].."")]:new(self,x,y,x1,y1,self.cardId_,pos,1)
 
+    print("create card")
     self.cardPos_[pos] = 1
 
     self.card_[card.id_..""] = card
 
+    print("create card")
     self.sp_ = self.sp_ - self.createSp_
 
     self.createSp_ = self.createSp_ + CardDef.CREATE_CARD_SP
 
+    print("create card")
 end
 
 --[[
@@ -460,9 +488,13 @@ function Player:update(dt)
     end
 
     info[1] = {sp = self.sp_,hp = self.hp_,createSp = self.createSp_,
-        enemy = enemy, card = card, bullet = bullet, boss = boss,enhance = enhance, name = self.name_}
+        enemy = enemy, card = card, bullet = bullet, boss = boss,
+        enhance = enhance, name = self.name_,cardGroup = self.cardGroupId_}
+
+
     info[2] = {sp = self.sp_,hp = self.hp_,createSp = self.createSp_,
-        enemy = enemy1, card = card1, bullet = bullet1, boss = boss1,enhance = enhance, name = self.name_}
+        enemy = enemy1, card = card1, bullet = bullet1, boss = boss1,
+        enhance = enhance, name = self.name_,cardGroup = self.cardGroupId_}
 
     --返回敌人信息
     for k, v in pairs(self.enemy_) do

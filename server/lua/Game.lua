@@ -42,7 +42,7 @@ function update(dt)
     else
         print("sssss shu ju chuan ru sssssssssss")
         local msg = cjson.decode(msgStr)
-        Utils.print_dump(msg)
+         Utils.print_dump(msg)
         if (msg["type"] == MsgDef.REQ_TYPE.SETUP_CONNECTION) then
             table.insert(sidMap_, msg["sid"])
             print(gameData)
@@ -63,26 +63,20 @@ function update(dt)
     end
 
     local data = gameData:update(dt)
-    Utils.print_dump(data)
+    -- Utils.print_dump(data)
 
     if data == nil then
         return
     end
 
     if data["size"] == "GAMEOVER" then
-        print("sssss send msg2 ssssssssssssssss")
-        -- gameData = nil
-        print("sssss send msg2 ssssssssssssssss")
-        -- gameData = GameData:new()
-        print("sssss send msg2 ssssssssssssssss")
-        local ack = {}
-        print("sssss send msg2 ssssssssssssssss")
-        ack["type"] = MsgDef.ACK_TYPE.GAME_OVER
-        ack["data"] = data
-        print("sssss send msg2 ssssssssssssssss")
-        -- sendMsg2Lobby(ack)
-        print("sssss send msg2 ssssssssssssssss")
-        msSleep(1000)
+        for i =1,2 do
+            local ack = {}
+            ack["type"] = MsgDef.ACK_TYPE.GAME_OVER
+            ack["data"] = data
+            local retMsg = cjson.encode(ack)
+            sendMsg2ClientBySid(data["sid"][i], retMsg)
+        end
         return
     end
 
@@ -114,4 +108,4 @@ function main()
 	end
 end
 
-xpcall(main, __G__TRACKBACK__)
+xpcall(main, Utils.__G__TRACKBACK__)

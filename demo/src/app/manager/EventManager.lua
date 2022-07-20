@@ -25,7 +25,7 @@ function EventManger:regListener(eventId, target, func)
         listenerMap_[eventId][target] = {}
     end
 
-    table.insert(listenerMap_[eventId][target], func)
+    table.insert(listenerMap_[eventId][target], func )
 end
 
 --[[--

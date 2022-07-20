@@ -63,7 +63,7 @@ function Card9:init(player,x,y,x1,y1,id,pos,starLevel)
     self.fireCd_ = 1.2
     self.player_ = player
     self.time_ = 0
-    self.size_ = 1
+    self.size_ = 9
     self.pos_ = pos
     self.enhanceLevel_ = self.player_.cardEnhanceLevel_[self.size_]
     self.starLevel_ = starLevel
@@ -71,7 +71,7 @@ function Card9:init(player,x,y,x1,y1,id,pos,starLevel)
     for i = 1,self.enhanceLevel_ -1 do
         self:enhance()
     end
-    self.skillValue_ = 0.02
+    self.skillValue_ = 0.5
     self.skillValueEnhance_ = 0.005
 end
 
@@ -150,7 +150,7 @@ function Card9:attack()
             hurt = enemy.hp_
         end
     end
-    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,1,nil)
+    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,9,nil)
     table.insert(self.player_.bullet_,bullet)
 
 end

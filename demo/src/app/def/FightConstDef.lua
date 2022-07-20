@@ -139,7 +139,7 @@ local FightConstDef = {
         NUM_SIZE = 25,--字号
     },
     SP_ENHANCE = {
-        100,200,400,700
+        100,200,400,700,100000
     }
 }
 

@@ -52,6 +52,7 @@ end
     @return none
 ]]
 function Enemy:destroy()
+    print("sssssssssssssssssssssssssssssssssssss enemy death sssssssssssssssssssssssssssssssssssssssssss")
     self.isDeath_ = true 
     EventManager:doEvent(EventDef.ID.ENEMY_DEATH,self)
     EventManager:doEvent(EventDef.ID.ENEMY_LIFE_DEATH,self)
@@ -82,7 +83,7 @@ function Enemy:update(data)
             if self.state_[k] == 1 then
             else
                 self.state_[k] = 1
-                EventManager:doEvent(EventDef.ID.STATE_CREATE,self)
+                EventManager:doEvent(EventDef.ID.STATE_CREATE,{self,k})
             end
         end
 

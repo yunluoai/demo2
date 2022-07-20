@@ -6,8 +6,10 @@
     检查：张昊煜
 ]]
 
-local BulletSprite = class("Bullet",function(Bullet)
-    return display.newSprite("image/fight/fight/bullet/1.png")
+local EnemyDef = require("src.app.def.EnemyDef")
+
+local BulletSprite = class("Bullet",function(data)
+    return display.newSprite(EnemyDef.BULLET_SIZE[data:getSize()])
 end)
 
 --[[--
@@ -18,7 +20,7 @@ end)
     
     @return none
 ]]
-function BulletSprite:ctor(Bullet, data)
+function BulletSprite:ctor(data)
 
     self.data_ = data -- 类型：Enemy ，敌人数据
 

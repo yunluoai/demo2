@@ -64,7 +64,7 @@ function Card10:init(player,x,y,x1,y1,id,pos,starLevel)
     self.fireCd_ = 1.3
     self.player_ = player
     self.time_ = 0
-    self.size_ = 1
+    self.size_ = 10
     self.pos_ = pos
     self.enhanceLevel_ = self.player_.cardEnhanceLevel_[self.size_]
     self.starLevel_ = starLevel
@@ -148,7 +148,7 @@ function Card10:attack()
     -- 使被攻击目标得到“中毒”状态。中毒：每秒造成额外伤害。
     local zhongdu = ZhongDu:new(self.skillValue_)
 
-    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,1,zhongdu)
+    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,10,zhongdu)
     table.insert(self.player_.bullet_,bullet)
 
 end

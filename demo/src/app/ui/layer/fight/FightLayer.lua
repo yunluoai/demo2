@@ -78,7 +78,7 @@ function FightLayer:onEnter()
     end)
 
     EventManager:regListener(EventDef.ID.BULLET_CREATE, self, function(bullet)
-        local bulletNode = BulletSprite.new("",bullet)
+        local bulletNode = BulletSprite.new(bullet)
         self:addChild(bulletNode)
         self.bulletMap_[bullet] = bulletNode
     end)
@@ -125,20 +125,20 @@ function FightLayer:onEnter()
         self.bossMap_[boss] = nil 
     end)
 
-    EventManager:regListener(EventDef.ID.STATE_CREATE, self, function(enemy)
-        local stateSprite = StateSprite.new(enemy)
+    EventManager:regListener(EventDef.ID.STATE_CREATE, self, function(data)
+        local stateSprite = StateSprite.new(data)
         self:addChild(stateSprite)
-        if  self.state1Map_[enemy] == nil then
+        if  self.state1Map_[data[1]] == nil then
         else
-            self.state1Map_[enemy]:removeFromParent()
-            self.state1Map_[enemy] = nil
+            self.state1Map_[data[1]]:removeFromParent()
+            self.state1Map_[data[1]] = nil
         end
-        self.state1Map_[enemy] = stateSprite
+        self.state1Map_[data[1]] = stateSprite
     end)
 
     EventManager:regListener(EventDef.ID.STATE_DEATH, self, function(enemy)
         local stateSprite = self.state1Map_[enemy]
-        stateSprite :removeFromParent()
+        stateSprite:removeFromParent()
         self.state1Map_[enemy] = nil 
     end)
 

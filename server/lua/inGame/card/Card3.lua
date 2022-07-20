@@ -63,7 +63,7 @@ function Card3:init(player,x,y,x1,y1,id,pos,starLevel)
     self.fireCd_ = 0.8
     self.player_ = player
     self.time_ = 0
-    self.size_ = 1
+    self.size_ = 3
     self.pos_ = pos
     self.enhanceLevel_ = self.player_.cardEnhanceLevel_[self.size_]
     self.starLevel_ = starLevel
@@ -153,7 +153,7 @@ function Card3:attack()
         isCha = true
     end
 
-    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,1,nil)
+    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,3,nil)
     table.insert(self.player_.bullet_,bullet)
 
 end

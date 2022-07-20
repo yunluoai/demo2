@@ -70,7 +70,7 @@ function Boss:update(data)
             if self.state_[k] == 1 then
             else
                 self.state_[k] = 1
-                EventManager:doEvent(EventDef.ID.STATE_CREATE,self)
+                EventManager:doEvent(EventDef.ID.STATE_CREATE,self,k)
             end
         end
 

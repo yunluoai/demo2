@@ -44,7 +44,7 @@ local CardDef = {
     CREATE_CARD_SP = 10,
 
     CARD_ENHANCE = {
-        100.200,400,700,1000000
+        100,200,400,700,100000,
     },
 
 }

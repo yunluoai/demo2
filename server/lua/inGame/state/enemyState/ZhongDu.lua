@@ -14,7 +14,7 @@ local ZhongDu = {
     -- attackNum_ = nil, --攻击的次数
     time_ = nil, --内置时间
     id_ = nil,
-    size_ = 1,
+    size_ = 2,
 }
 
 local id = 0

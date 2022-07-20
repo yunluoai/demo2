@@ -5,7 +5,33 @@
     编写：李昊
 ]]
 local InfoLayer = class("InfoLayer", require("app.ui.layer.BaseLayer"))
-local card = require("src.app.data.card.Card1")
+local Card1 = require("src.app.data.card.Card1") 
+local Card2 = require("src.app.data.card.Card2") 
+local Card3 = require("src.app.data.card.Card3") 
+local Card4 = require("src.app.data.card.Card4") 
+local Card5 = require("src.app.data.card.Card5") 
+local Card6 = require("src.app.data.card.Card6") 
+local Card7 = require("src.app.data.card.Card7") 
+local Card8 = require("src.app.data.card.Card8") 
+local Card9 = require("src.app.data.card.Card9") 
+local Card10 = require("src.app.data.card.Card10") 
+local Card11 = require("src.app.data.card.Card11") 
+local Card12 = require("src.app.data.card.Card12")
+local Card13 = require("src.app.data.card.Card13")
+local Card14 = require("src.app.data.card.Card14")
+local Card15 = require("src.app.data.card.Card15")
+local Card16 = require("src.app.data.card.Card16")
+local Card17 = require("src.app.data.card.Card17")
+local Card18 = require("src.app.data.card.Card18")
+local Card19 = require("src.app.data.card.Card19")
+local Card20 = require("src.app.data.card.Card20")
+
+local Card = {
+    Card1.new(0,0),Card2.new(0,0),Card3.new(0,0),Card4.new(0,0),Card5.new(0,0),
+    Card6.new(0,0),Card7.new(0,0),Card8.new(0,0),Card9.new(0,0),Card10.new(0,0),
+    Card11.new(0,0),Card12.new(0,0),Card13.new(0,0),Card14.new(0,0),Card15.new(0,0),
+    Card16.new(0,0),Card17.new(0,0),Card18.new(0,0),Card19.new(0,0),Card20.new(0,0),
+}
 local FightConstDef = require("src.app.def.FightConstDef")
 local GameData = require("src.app.data.GameData")
 local MsgDef = require("src.app.def.MsgDef")
@@ -77,9 +103,8 @@ function InfoLayer:init()
     self.bgScaleFactorY_ = display.top/1280
     self.bgScaleFactorX_ = display.right/720
     print(self.bgScaleFactorX_)
-    local card1 = card.new(0,0)
-    self.enemyCardGroup_ = {card1,card1,card1,card1,card1}
-    self.cardGroup_ = {card1,card1,card1,card1,card1}
+    self.enemyCardGroup_ = {1,2,3,4,5}
+    self.cardGroup_ = {1,2,3,4,5}
     self.name_ = "me"
     self.enemyName_ = "robot"
     self.boss_ = 1
@@ -127,7 +152,7 @@ function InfoLayer:initView()
                                                 + FightConstDef.ENEMY_SIZE.CARD_SIZE_INTERVAL)
     for i =1,#self.enemyCardGroup_ do
         --敌方卡片的图片
-        local sprite = display.newSprite(self.enemyCardGroup_[i]:getSmallColorSpriteImg())
+        local sprite = display.newSprite(Card[self.enemyCardGroup_[i]]:getSmallColorSpriteImg())
         sprite:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_SIZE_X/120)
         sprite:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_SIZE_Y/120)
         sprite:setAnchorPoint(0.0, 1.0)
@@ -157,7 +182,7 @@ function InfoLayer:initView()
         self.enemyCardSprites_[i+5] = level
         print( self.enemyCardSprites_[i+5] )
         --敌方卡片的攻击类型
-        local type = display.newSprite(self.enemyCardGroup_[i]:getTypeImg())
+        local type = display.newSprite(Card[self.enemyCardGroup_[i]]:getTypeImg())
         type:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_TYPE_SIZE_X/34)
         type:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_TYPE_SIZE_X/42)
         type:setAnchorPoint(1.0, 1.0)
@@ -203,7 +228,7 @@ function InfoLayer:initView()
     cardX = display.cx - self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_SIZE_X*2 - self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_SIZE_INTERVAL*2
     for i =1,#self.cardGroup_ do
         --己方卡片的图片
-        local sprite = display.newSprite(self.cardGroup_[i]:getSmallColorSpriteImg())
+        local sprite = display.newSprite(Card[self.cardGroup_[i]]:getSmallColorSpriteImg())
         sprite:setScaleX(self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_SIZE_X/120)
         sprite:setScaleY(self.bgScaleFactorY_*FightConstDef.ME_SIZE.CARD_SIZE_Y/120)
         sprite:setAnchorPoint(0.5, 1.0)
@@ -237,7 +262,7 @@ function InfoLayer:initView()
         self.cardSprites_[ i + 5 ] = level
 
         --己方卡片的攻击类型
-        local sprite2 = display.newSprite(self.cardGroup_[i]:getTypeImg())
+        local sprite2 = display.newSprite(Card[self.cardGroup_[i]]:getTypeImg())
         sprite2:setScaleX(self.bgScaleFactorX_*FightConstDef.ME_SIZE.CARD_TYPE_SIZE_X/34)
         sprite2:setScaleY(self.bgScaleFactorY_*FightConstDef.ME_SIZE.CARD_TYPE_SIZE_X/42)
         sprite2:setAnchorPoint(1.0, 1.0)
@@ -506,6 +531,19 @@ function InfoLayer:resetLife()
     end
 end
 
+function InfoLayer:resetCardSprite()
+    local cardGroup = GameData:getCardGroup()
+
+    for i = 1,5 do 
+        self.enemyCardGroup_[i] = cardGroup[i+5] 
+        self.enemyCardSprites_[i]:setTexture(Card[self.enemyCardGroup_[i]]:getSmallColorSpriteImg())
+
+        self.cardGroup_[i] = cardGroup[i+5]
+        self.cardSprites_[i]:setTexture(Card[self.cardGroup_[i]]:getSmallColorSpriteImg())
+    end
+
+end
+
 --[[--
     界面刷新
 
@@ -558,7 +596,21 @@ function InfoLayer:update()
     self.createSp_ =  GameData:getMePlayer():getCreateSp()
     self.createSprite_[2]:setString(string.format("%d", self.createSp_))
     self.spSprite_[2]:setString(string.format("%d", self.sp_))
-    
+
+    local isSame = true
+    local cardGroup = GameData:getCardGroup()
+    for i = 1,5 do 
+        if self.enemyCardGroup_[i] ~= cardGroup[i+5] then
+            isSame = false
+            break
+        elseif self.cardGroup_[i] ~= cardGroup[i+5] then
+            isSame = false
+            break
+        end
+    end
+    if isSame == false then
+        self:resetCardSprite()
+    end
 end
 
 return InfoLayer

@@ -4,6 +4,8 @@
     编写：李昊
 ]]
 
+local Hurt = require("inGame.hurt.Hurt")
+
 local ZhuoShao = {
     enemy_ = nil, --敌人
     attackCd_ = nil, --攻击cd
@@ -47,6 +49,10 @@ end
 
 function ZhuoShao:attack()
     self.enemy_.hp_ = self.enemy_.hp_ - self.hurt_
+    local hurt = Hurt:new(self.enemy_.player_,self.hurt_, self.enemy_.x_, self.enemy_.y_, 
+    self.enemy_.x1_, self.enemy_.y1_,1,self.enemy_.player_.gameData_)
+    table.insert(self.enemy_.player_.gameData_.hurt_,hurt)
+
 end
 
 function ZhuoShao:update(dt)

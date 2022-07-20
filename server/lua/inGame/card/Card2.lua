@@ -8,7 +8,6 @@
 ]]
 
 local Bullet = require("inGame.bullet.Bullet")
-local ZhuoShao = require("inGame.state.enemyState.ZhuoShao")
 
 local Card2 = {
     x_ = nil,
@@ -64,7 +63,7 @@ function Card2:init(player,x,y,x1,y1,id,pos,starLevel)
     self.fireCd_ = 0.8
     self.player_ = player
     self.time_ = 0
-    self.size_ = 1
+    self.size_ = 2
     self.pos_ = pos
     self.enhanceLevel_ = self.player_.cardEnhanceLevel_[self.size_]
     self.starLevel_ = starLevel
@@ -123,7 +122,6 @@ function Card2:attack()
     print(self.id_)
     print(self.starLevel_)
     if self.starLevel_ == 2 then 
-        -- msSleep(100000)
     end
      -- 每次攻击会对星级数个怪物造成伤害
     -- 一星打一个，两星打两个.......
@@ -154,7 +152,7 @@ function Card2:attack()
         isCha = true
     end
     
-    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,1,nil)
+    local bullet = Bullet:new(enemy,self.x_,self.y_,self.x1_,self.y1_,hurt,isCha,self.player_:getBulletId(),self.player_,2,nil)
     table.insert(self.player_.bullet_,bullet)
 
     -- 其余目标
@@ -243,7 +241,6 @@ function Card2:attack()
         end
         -- print(e)
         -- print(enemy)
-        -- msSleep(10000)
         local bullet1 = Bullet:new(e,self.x_,self.y_,self.x1_,self.y1_,hurt1,isCha1,self.player_:getBulletId(),self.player_,1,nil)
         table.insert(self.player_.bullet_,bullet1)
     end

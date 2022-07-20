@@ -31,7 +31,7 @@ function FightScene:ctor()
 
     self.resultView_ = ResultView.new() --战斗结算界面
     self:addChild(self.resultView_)
-    -- self.resultView_:hideView()
+    self.resultView_:hideView()
     -- self.resultView_:showView()
 
 end

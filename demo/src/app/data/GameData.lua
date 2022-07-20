@@ -49,6 +49,7 @@ local mePlayer = GamePlayer.new(2)
 local bossTime = 120 
 local enhance = {1,1,1,1,1,1,1,1,1,1}
 local name = {"me","robot"}
+local cardGroup = {1,1,1,1,1,1,1,1,1,1}
 
 function GameData:init()
 
@@ -74,6 +75,10 @@ function GameData:getName()
     return name
 end
 
+function GameData:getCardGroup()
+    return cardGroup
+end
+
 
 function GameData:createCard()
     local msg = {}
@@ -84,22 +89,19 @@ function GameData:createCard()
 end
 
 function GameData:send(num,msg)
-    print(num)
     TCP.send(num,msg)
 end
 
 function GameData:update(dt, data)
-    print("ssssssssssssssss gamedata update  sssssssss")
     if data == nil then 
         print("Offline!")
         return
     else
         bossTime = data.time/1000
-        enemyPlayer:update(data.player1)
-        mePlayer:update(data.player2)
+        enemyPlayer:update(data.player2)
+        mePlayer:update(data.player1)
     end
 
-    print("ssssssssssssssss gamedata update  sssssssss")
     --伤害处理
     for i = 1,#data.hurt do
         if  self.hurt_[data.hurt[i].id] == nil then
@@ -110,7 +112,6 @@ function GameData:update(dt, data)
             self.hurt_[data.hurt[i].id]:update(data.hurt[i])
         end
     end
-    print("ssssssssssssssss gamedata update  sssssssss")
 
     for  i, v in pairs(self.hurt_) do
         local isDestroy = true
@@ -131,9 +132,15 @@ function GameData:update(dt, data)
         enhance[i] = data.player1.enhance[i]
         enhance[i+5] = data.player2.enhance[i]
     end
+
     name[1] = data.player1.name
     name[2] = data.player2.name
-    print("ssssssssssssssss gamedata update  sssssssss")
+
+    for  i=1,5  do
+        cardGroup[i] = data.player1.cardGroup[i]
+        cardGroup[i+5] = data.player2.cardGroup[i]
+    end
+
 end
 
 return GameData

@@ -5,8 +5,10 @@
 
 ]]
 
-local StateSprite = class("State", function(State)
-    return display.newSprite("image/fight/fight/buff/firing.png")
+local EnemyDef = require("src.app.def.EnemyDef")
+
+local StateSprite = class("State", function(data)
+    return display.newSprite(EnemyDef.BUFF_SIZE[data[2]])
 end)
 
 --[[--
@@ -18,7 +20,7 @@ end)
     @return none
 ]]
 function StateSprite:ctor(data)
-    self.data_ = data -- 类型：State ，敌人数据
+    self.data_ = data[1] -- 类型：State ，敌人数据
     self:setAnchorPoint(0.5, 0.3)
     self:setScale(0.7)
     self:setPosition(self.data_:getX(), self.data_:getY())
