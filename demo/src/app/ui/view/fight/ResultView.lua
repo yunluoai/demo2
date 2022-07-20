@@ -166,8 +166,8 @@ function ResultView:initView()
         loserSprites[i] = sprite
         --失败方卡片的等级
         local sprite1 = display.newSprite(loser.cardGroup[i]:getLevelImg())
-        sprite1:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE_X/36*1.2)
-        sprite1:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE_Y/20*1.2)
+        sprite1:setScaleX(self.bgScaleFactorX_*1.2)
+        sprite1:setScaleY(self.bgScaleFactorY_*1.2)
         sprite1:setAnchorPoint(0.5, 1.0)
         sprite1:setPosition(cardx + 0.45*self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_SIZE_X + 7,
             display.top - 365)
@@ -270,8 +270,8 @@ function ResultView:initView()
         winSprites[i] = sprite
         --胜利方卡片的等级
         local sprite1 = display.newSprite(winner.cardGroup[i]:getLevelImg())
-        sprite1:setScaleX(self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE_X/36*1.2)
-        sprite1:setScaleY(self.bgScaleFactorY_*FightConstDef.ENEMY_SIZE.CARD_LEVEL_SIZE_Y/20*1.2)
+        sprite1:setScaleX(self.bgScaleFactorX_*1.2)
+        sprite1:setScaleY(self.bgScaleFactorY_*1.2)
         sprite1:setAnchorPoint(0.5, 1.0)
         sprite1:setPosition(cardx + 0.45*self.bgScaleFactorX_*FightConstDef.ENEMY_SIZE.CARD_SIZE_X + 7,
             display.top - 365 - 510)

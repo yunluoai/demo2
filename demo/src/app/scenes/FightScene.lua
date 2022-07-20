@@ -31,7 +31,8 @@ function FightScene:ctor()
 
     self.resultView_ = ResultView.new() --战斗结算界面
     self:addChild(self.resultView_)
-    self.resultView_:hideView()
+    -- self.resultView_:hideView()
+    -- self.resultView_:showView()
 
 end
 
@@ -57,6 +58,10 @@ function FightScene:onEnter()
         GameData:update(nil, data)
     end)
 
+    TCP.regListener(MsgDef.ACK_TYPE.GAME_OVER, function(resp)
+        TCP.send(resp["type"],resp["data"])
+    end)
+
 end
 
 --[[--
@@ -76,6 +81,7 @@ end
 ]]
 function FightScene:update(dt)
     self.fightView_:update(dt)
+    self.resultView_:update(dt)
 end
 
 return FightScene
