@@ -70,10 +70,17 @@ function handleLogin(msg)
 		local retMsg = cjson.encode(resp)
 		sendMsg2ClientBySid(msg["sid"], retMsg)
     else
-        print("login fail")
-        local resp = {}
-        resp["type"] = MsgDef.ACK_TYPE.LOGIN_FAIL
-        resp["pid"] = -1
+		print("login fail")
+		local resp = {}
+		resp["type"] = MsgDef.ACK_TYPE.LOGIN_FAIL
+		resp["pid"] = -1
+
+		if LobbyData:ifOnLine(msg["nick"]) then -- 如果账号已经登录
+			resp["errorType"] = 1
+		else -- 账号密码错误
+			resp["errorType"] = 2
+		end
+
         local retMsg = cjson.encode(resp)
         sendMsg2ClientBySid(msg["sid"], retMsg)
     end
@@ -124,7 +131,9 @@ end
 ]]
 function handleSendStoreData(msg)
 	local resp = {};
+	local tab = os.date("*t")
 	resp["type"] = MsgDef.ACK_TYPE.STORE_DATA_SEND_SUCCEED
+	resp["date"] = tab.year .. tab.month .. tab.day
 	resp["data"] = StoreData.goldStoreCards_
 	local retMsg = cjson.encode(resp)
 	sendMsg2ClientBySid(msg["sid"], retMsg)
@@ -183,19 +192,15 @@ function handleStartMapping(msg)
 	else -- 转发消息
 		local playerOneMsg = LobbyData.mappingQueue:deQueue()
 		local playerTwoMsg = msg
-
 		local sidOne = playerOneMsg["sid"]
 		local sidTwo = playerTwoMsg["sid"]
-
 		local retMsg = {}
 		retMsg["data"] = {
 			playerOneMsg,
 			playerTwoMsg
 		}
 		retMsg["type"] = MsgDef.REQ_TYPE.SETUP_CONNECTION
-
 		sendMsg2Game(cjson.encode(retMsg)) -- 将消息转发到Game模块
-
 		-- 发送匹配成功消息到客户端
 		local respOne = {};
 		respOne["type"] = MsgDef.ACK_TYPE.MAPPING_SUCCEED
@@ -263,8 +268,6 @@ function update()
 	elseif (msg["type"] == MsgDef.REQ_TYPE.UPGRADE_TOWER) then
 		sendMsg2Game(cjson.encode(msg))
 	elseif (msg["type"] == MsgDef.REQ_TYPE.ENFORCE_TOWER) then
-		sendMsg2Game(cjson.encode(msg))
-	elseif (msg["type"] == MsgDef.REQ_TYPE.GAME_GIVEIN) then
 		sendMsg2Game(cjson.encode(msg))
 	end
 end
